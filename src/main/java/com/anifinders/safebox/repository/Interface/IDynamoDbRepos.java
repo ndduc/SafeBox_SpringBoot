@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface IDynamoDbRepos {
-    List<SafeBoxModel> searchSafeBoxByLocation(String location);
+    List<SafeBoxModel> searchSafeBox(String searchText, String option);
     void addUpdateSafeBox(SafeBoxModel model);
 
     SafeBoxModel getSafeBox(String hashKey, String rangeKey);

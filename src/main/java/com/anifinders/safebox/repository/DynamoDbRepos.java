@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.anifinders.safebox.helper.dynamo.GsiMapper;
 import com.anifinders.safebox.repository.Interface.IDynamoDbRepos;
 import com.anifinders.safebox.repository.Model.SafeBoxModel;
 import org.springframework.stereotype.Repository;
@@ -36,12 +37,24 @@ public class DynamoDbRepos implements IDynamoDbRepos {
     }
 
     private final String tableName = "SafeBox";
-    private final String gsiIndex1 = safeBoxGSI.get("GSI1");
 
 
 
-    public  List<SafeBoxModel> searchSafeBoxByLocation(String location) {
-        var result = queryBeginWith("LOCATION", location);
+    public  List<SafeBoxModel> searchSafeBox(String searchText, String option) {
+
+        String hk;
+        GsiMapper gsiMapper;
+        if (option.equalsIgnoreCase("location")) {
+            hk = "LOCATION";
+            gsiMapper = safeBoxGSI.get("GSI1");
+        } else if (option.equalsIgnoreCase("user")) {
+            hk = "USER";
+            gsiMapper = safeBoxGSI.get("GSI2");
+        } else {
+            hk = "LOCATION";
+            gsiMapper = safeBoxGSI.get("GSI1");
+        }
+        var result = queryBeginWith(hk, searchText, gsiMapper);
         List<SafeBoxModel> items = new ArrayList<>();
         for(Map<String, AttributeValue> item : result.getItems()) {
             SafeBoxModel safeBox = dynamoDBMapper.marshallIntoObject(SafeBoxModel.class, item);
@@ -49,6 +62,7 @@ public class DynamoDbRepos implements IDynamoDbRepos {
         }
         return items;
     }
+
 
     public void addUpdateSafeBox(SafeBoxModel model) {
         putItem(model);
@@ -111,9 +125,9 @@ public class DynamoDbRepos implements IDynamoDbRepos {
         }
     }
 
-    private QueryResult queryBeginWith(String hashKey, String rangeKey) {
-        QueryRequest queryRequest = new QueryRequest().withTableName(this.tableName).withIndexName(this.gsiIndex1)
-                .withKeyConditionExpression(operatorEqual("GSI_HK_1", ":value1") + " and " + operatorBegin("GSI_RK_1", ":value2"))
+    private QueryResult queryBeginWith(String hashKey, String rangeKey, GsiMapper gsiMapper) {
+        QueryRequest queryRequest = new QueryRequest().withTableName(this.tableName).withIndexName(gsiMapper.getIndex())
+                .withKeyConditionExpression(operatorEqual(gsiMapper.getHk(), ":value1") + " and " + operatorBegin(gsiMapper.getRk(), ":value2"))
                 .withExpressionAttributeValues(
                         Map.of(
                                 ":value1", new AttributeValue().withS(hashKey),

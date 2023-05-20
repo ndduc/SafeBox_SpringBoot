@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -22,23 +24,25 @@ public class SafeBoxService implements ISafeBoxService {
         this.dynamoDbRepos = new DynamoDbRepos(amazonDynamoDB);
     }
 
-    public ResponseObject searchSafeBoxByLocation(String location) {
+    public ResponseObject searchSafeBox(String searchText, String option) {
         ResponseObject <List<SafeBoxModelDAO>> resObject = new ResponseObject<>();
 
-        try {
-            var dataList = this.dynamoDbRepos.searchSafeBoxByLocation(location);
-            List<SafeBoxModelDAO> models = new ArrayList<>();
-            for(var model : dataList) {
-                SafeBoxModelDAO dao = new SafeBoxModelDAO(model);
-                models.add(dao);
+        if (!searchText.isEmpty()) {
+            try {
+                var dataList = this.dynamoDbRepos.searchSafeBox(searchText, option);
+                List<SafeBoxModelDAO> models = new ArrayList<>();
+                for(var model : dataList) {
+                    SafeBoxModelDAO dao = new SafeBoxModelDAO(model);
+                    models.add(dao);
+                }
+                // SORT DESC
+                Collections.sort(models, Comparator.comparing(SafeBoxModelDAO::getModifiedDatetime).reversed());
+                resObject.setDataObject(models);
+            } catch (Exception e) {
+                var errors = resObject.getErrors();
+                errors.add(e.getMessage());
             }
-
-            resObject.setDataObject(models);
-        } catch (Exception e) {
-            var errors = resObject.getErrors();
-            errors.add(e.getMessage());
         }
-
         return resObject;
     }
 

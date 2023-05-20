@@ -22,9 +22,10 @@ public class SafeBoxController {
     Gson gson = new Gson();
 
     @GetMapping(path = "/search-location")
-    public ResponseEntity<String> searchByLocation(@RequestHeader("spring-api-key") String apiKey, @RequestParam("l") String location) {
+    public ResponseEntity<String> searchByLocation(@RequestHeader("spring-api-key") String apiKey, @RequestParam("l") String searchText,
+                                                   @RequestParam("m") String option, @RequestParam("s") String sort) {
         if (apiKey.equals(APIKEY)) {
-            var result = safeBoxService.searchSafeBoxByLocation(location);
+            var result = safeBoxService.searchSafeBox(searchText, option);
             return ResponseEntity.ok(gson.toJson(result));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Api Key");

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface ISafeBoxService {
-    ResponseObject searchSafeBoxByLocation(String location);
+    ResponseObject searchSafeBox(String searchText, String option);
     void addUpdateSafeBox(SafeBoxModelDAO dao);
     ResponseObject getSafeBox(String rangeKey);
 }
