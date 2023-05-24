@@ -7,7 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SafeBoxApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SafeBoxApplication.class, args);
+		try {
+			SpringApplication.run(SafeBoxApplication.class, args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
