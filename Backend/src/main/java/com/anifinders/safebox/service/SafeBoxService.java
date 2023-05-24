@@ -27,21 +27,19 @@ public class SafeBoxService implements ISafeBoxService {
     public ResponseObject searchSafeBox(String searchText, String option) {
         ResponseObject <List<SafeBoxModelDAO>> resObject = new ResponseObject<>();
 
-        if (!searchText.isEmpty()) {
-            try {
-                var dataList = this.dynamoDbRepos.searchSafeBox(searchText, option);
-                List<SafeBoxModelDAO> models = new ArrayList<>();
-                for(var model : dataList) {
-                    SafeBoxModelDAO dao = new SafeBoxModelDAO(model);
-                    models.add(dao);
-                }
-                // SORT DESC
-                Collections.sort(models, Comparator.comparing(SafeBoxModelDAO::getModifiedDatetime).reversed());
-                resObject.setDataObject(models);
-            } catch (Exception e) {
-                var errors = resObject.getErrors();
-                errors.add(e.getMessage());
+        try {
+            var dataList = this.dynamoDbRepos.searchSafeBox(searchText, option);
+            List<SafeBoxModelDAO> models = new ArrayList<>();
+            for(var model : dataList) {
+                SafeBoxModelDAO dao = new SafeBoxModelDAO(model);
+                models.add(dao);
             }
+            // SORT DESC
+            Collections.sort(models, Comparator.comparing(SafeBoxModelDAO::getModifiedDatetime).reversed());
+            resObject.setDataObject(models);
+        } catch (Exception e) {
+            var errors = resObject.getErrors();
+            errors.add(e.getMessage());
         }
         return resObject;
     }

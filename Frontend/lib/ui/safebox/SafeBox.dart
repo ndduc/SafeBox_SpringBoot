@@ -6,6 +6,7 @@ import 'package:safebox/bloc/state/SafeBoxState.dart';
 import 'package:clipboard/clipboard.dart';
 
 import '../../model/dao/SafeBoxDao.dart';
+import 'AddSafeBox.dart';
 
 List<String> searchOptionList = ['Location', 'User'];
 
@@ -29,7 +30,7 @@ class _SafeBox extends State<SafeBox> {
   void initState() {
     super.initState();
     safeBoxBloc = SafeBoxBloc();
-    safeBoxBloc.add(GetRecordsEvent("test"));
+    safeBoxBloc.add(GetRecordsEvent("", ""));
   }
 
   @override
@@ -143,15 +144,8 @@ class _SafeBox extends State<SafeBox> {
                           width: MediaQuery.of(context).size.width * 0.61,
                           child: ElevatedButton(
                             onPressed: () {
-                              switch(searchOptionSelectedValue) {
-                                case "Location":
-                                  safeBoxBloc.add(GetRecordsEvent(searchController.text));
-                                  break;
-                                case "User":
-                                  break;
-                                default:
-                                  break;
-                              }
+                              safeBoxBloc.add(GetRecordsEvent(searchController.text, searchOptionSelectedValue));
+
                             },
                             child: Text('Search Credential'),
                           ),
@@ -163,6 +157,7 @@ class _SafeBox extends State<SafeBox> {
                           width: MediaQuery.of(context).size.width * 0.31,
                           child: ElevatedButton(
                             onPressed: () {
+                              navigateToAddSafeBox();
                             },
                             child: Text('Add New'),
                           ),
@@ -278,6 +273,13 @@ class _SafeBox extends State<SafeBox> {
             )
         ),
       ],
+    );
+  }
+
+  void navigateToAddSafeBox() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AddSafeBox()),
     );
   }
 

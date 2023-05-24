@@ -44,17 +44,20 @@ public class DynamoDbRepos implements IDynamoDbRepos {
 
         String hk;
         GsiMapper gsiMapper;
+        QueryResult result;
         if (option.equalsIgnoreCase("location")) {
             hk = "LOCATION";
             gsiMapper = safeBoxGSI.get("GSI1");
+            result = queryBeginWith(hk, searchText, gsiMapper);
         } else if (option.equalsIgnoreCase("user")) {
-            hk = "USER";
+            hk = "NAME";
             gsiMapper = safeBoxGSI.get("GSI2");
+            result = queryBeginWith(hk, searchText, gsiMapper);
         } else {
             hk = "LOCATION";
             gsiMapper = safeBoxGSI.get("GSI1");
+            result = queryWithHashKey(hk, gsiMapper);
         }
-        var result = queryBeginWith(hk, searchText, gsiMapper);
         List<SafeBoxModel> items = new ArrayList<>();
         for(Map<String, AttributeValue> item : result.getItems()) {
             SafeBoxModel safeBox = dynamoDBMapper.marshallIntoObject(SafeBoxModel.class, item);
@@ -132,6 +135,17 @@ public class DynamoDbRepos implements IDynamoDbRepos {
                         Map.of(
                                 ":value1", new AttributeValue().withS(hashKey),
                                 ":value2", new AttributeValue().withS(rangeKey)
+                        )
+                );
+        return amazonDynamoDB.query(queryRequest);
+    }
+
+    private QueryResult queryWithHashKey(String hashKey, GsiMapper gsiMapper) {
+        QueryRequest queryRequest = new QueryRequest().withTableName(this.tableName).withIndexName(gsiMapper.getIndex())
+                .withKeyConditionExpression(operatorEqual(gsiMapper.getHk(), ":value1"))
+                .withExpressionAttributeValues(
+                        Map.of(
+                                ":value1", new AttributeValue().withS(hashKey)
                         )
                 );
         return amazonDynamoDB.query(queryRequest);

@@ -1,8 +1,10 @@
 abstract class SafeBoxEvent {}
 
 class GetRecordsEvent extends SafeBoxEvent {
-  final String location;
-  GetRecordsEvent(this.location);
+  final String searchText;
+  final String searchOption;
+
+  GetRecordsEvent(this.searchText, this.searchOption);
 }
 
 class UpdateSearchOptionEvent extends SafeBoxEvent {
