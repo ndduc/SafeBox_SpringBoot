@@ -22,3 +22,9 @@ class UpdateSearchOptionEvent extends SafeBoxEvent {
   final String newOption;
   UpdateSearchOptionEvent(this.newOption);
 }
+
+class HideUnHidePasswordEvent extends SafeBoxEvent {
+  bool hide = true;
+  final int index;
+  HideUnHidePasswordEvent(this.index, this.hide);
+}

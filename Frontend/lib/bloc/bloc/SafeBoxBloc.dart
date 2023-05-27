@@ -15,6 +15,7 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
     on<UpdateSearchOptionEvent>(updateSearchOptionEvent);
     on<SaveRecordEvent>(saveSafeBoxRecordEvent);
     on<DeleteRecordEvent>(deleteSafeBoxRecordEvent);
+    on<HideUnHidePasswordEvent>(hideUnHidePasswordEvent);
   }
 
   AbstractSafeBoxRepos safeBoxRepos = SafeBoxRepos();
@@ -69,6 +70,9 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
     emit(SafeBoxSearchOptionUpdateState(event.newOption));
   }
 
+  void hideUnHidePasswordEvent(HideUnHidePasswordEvent event, Emitter<SafeBoxState> emit) {
+    emit(SafeBoxHideUnHidePasswordState(event.index, event.hide));
+  }
 
 
 }

@@ -18,6 +18,7 @@ class SafeBox extends StatefulWidget {
 
 class _SafeBox extends State<SafeBox> {
   late SafeBoxBloc safeBoxBloc;
+  Map<int, bool> credCartPasswordMap = {};
   String searchOptionSelectedValue = searchOptionList.first;
   List<SafeBoxDao> safeBoxList = [];
 
@@ -61,6 +62,10 @@ class _SafeBox extends State<SafeBox> {
           }
           else if (state is SafeBoxLoaded) {
             safeBoxList = state.data.dataObject;
+            credCartPasswordMap = {};
+            for(var i = 0; i < safeBoxList.length; i++) {
+              credCartPasswordMap[i] = true;
+            }
             userNameControllerList = List.generate(safeBoxList.length, (index) => TextEditingController(text: safeBoxList[index].userName));
             passWordControllerList = List.generate(safeBoxList.length, (index) => TextEditingController(text: safeBoxList[index].password));
 
@@ -74,6 +79,9 @@ class _SafeBox extends State<SafeBox> {
           }
           else if (state is SafeBoxSearchOptionUpdateState) {
             searchOptionSelectedValue = state.selectedOption;
+          }
+          else if (state is SafeBoxHideUnHidePasswordState) {
+            credCartPasswordMap[state.index] = state.hide;
           }
           return mainBody();
         },
@@ -172,110 +180,7 @@ class _SafeBox extends State<SafeBox> {
                       child: ListView.builder(
                         itemCount: safeBoxList.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            child: Container(
-                                child: Column(
-                                  children: [
-                                    ListTile(
-                                      title: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(safeBoxList[index].location),
-                                          Text(safeBoxList[index].website)
-                                        ],
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                          Container(
-                                            height: MediaQuery.of(context).size.width * 0.10,
-                                            child: ListTile(
-                                              title: TextField(
-                                                controller: userNameControllerList[index],
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  labelText: 'Username',
-                                                ),
-                                              ),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons.copy),
-                                                onPressed: () {
-                                                  FlutterClipboard.copy(userNameControllerList[index].text)
-                                                      .then((value) => print('Value copied to clipboard'))
-                                                      .catchError((error) => print('Failed to copy text: $error'));
-                                                  // Perform delete action
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            height: MediaQuery.of(context).size.width * 0.10,
-                                            child: ListTile(
-                                              title: TextField(
-                                                obscureText: true,
-                                                controller: passWordControllerList[index],
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(),
-                                                  labelText: 'Password',
-                                                ),
-                                              ),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons.copy),
-                                                onPressed: () {
-                                                  FlutterClipboard.copy(passWordControllerList[index].text)
-                                                      .then((value) => print('Value copied to clipboard'))
-                                                      .catchError((error) => print('Failed to copy text: $error'));
-                                                  // Perform delete action
-                                                },
-                                              )
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 5,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text("Last Update Date Time: ${safeBoxList[index].modifiedDatetime}")
-                                      ],
-                                    ),
-
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextButton(
-                                          child: const Text('Update'),
-                                          onPressed: () {
-                                            var model = safeBoxList[index];
-                                            model.password = passWordControllerList[index].text;
-                                            model.userName = userNameControllerList[index].text;
-                                            safeBoxBloc.add(SaveRecordEvent(model));
-                                          },
-                                        ),
-                                        const SizedBox(width: 8),
-                                        TextButton(
-                                          child: const Text('Delete'),
-                                          onPressed: () {
-                                            var model = safeBoxList[index];
-                                            safeBoxBloc.add(DeleteRecordEvent(model));
-                                          },
-                                        ),
-                                        const SizedBox(width: 8),
-                                      ],
-                                    )
-                                  ],
-                                )
-                            ),
-                          );
+                          return credCart(index);
                         },
                       )
                   )
@@ -287,10 +192,154 @@ class _SafeBox extends State<SafeBox> {
     );
   }
 
+  Widget credCart(int index) {
+    return Card(
+      child: Container(
+          child: Column(
+            children: [
+              ListTile(
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(safeBoxList[index].location),
+                    Text(safeBoxList[index].website)
+                  ],
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.width * 0.10,
+                      child: ListTile(
+                        title: TextField(
+                          controller: userNameControllerList[index],
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Username',
+                          ),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.copy),
+                          onPressed: () {
+                            FlutterClipboard.copy(userNameControllerList[index].text)
+                                .then((value) => print('Value copied to clipboard'))
+                                .catchError((error) => print('Failed to copy text: $error'));
+                            // Perform delete action
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.width * 0.10,
+                      child: ListTile(
+                        title: TextField(
+                          obscureText: credCartPasswordMap[index]!,
+                          controller: passWordControllerList[index],
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Password',
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.copy),
+                              onPressed: () {
+                                FlutterClipboard.copy(passWordControllerList[index].text)
+                                    .then((value) => print('Value copied to clipboard'))
+                                    .catchError((error) => print('Failed to copy text: $error'));
+                                // Perform delete action
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.hide_source),
+                              onPressed: () {
+                                safeBoxBloc.add(HideUnHidePasswordEvent(index, !credCartPasswordMap[index]!));
+                                // Perform delete action
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Last Update Date Time: ${safeBoxList[index].modifiedDatetime}")
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: const Text('Update'),
+                    onPressed: () {
+                      var model = safeBoxList[index];
+                      model.password = passWordControllerList[index].text;
+                      model.userName = userNameControllerList[index].text;
+                      safeBoxBloc.add(SaveRecordEvent(model));
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    child: const Text('Delete'),
+                    onPressed: () {
+                      confirmDialog(index);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              )
+            ],
+          )
+      ),
+    );
+  }
+
   void navigateToAddSafeBox() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddSafeBox()),
+    );
+  }
+
+  Future confirmDialog(int index) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+        title: Text('Confirmation'),
+        content: Text('Are you sure you want to delete?'),
+        actions: [
+          TextButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Delete'),
+            onPressed: () {
+              // Perform delete action
+              var model = safeBoxList[index];
+              safeBoxBloc.add(DeleteRecordEvent(model));
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      )
     );
   }
 

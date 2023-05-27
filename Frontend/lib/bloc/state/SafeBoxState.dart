@@ -23,3 +23,10 @@ class SafeBoxSearchOptionUpdateState extends SafeBoxState {
   final String selectedOption;
   SafeBoxSearchOptionUpdateState(this.selectedOption);
 }
+
+// hide for pasword State
+class SafeBoxHideUnHidePasswordState extends SafeBoxState {
+  bool hide = true;
+  final int index;
+  SafeBoxHideUnHidePasswordState(this.index, this.hide);
+}
