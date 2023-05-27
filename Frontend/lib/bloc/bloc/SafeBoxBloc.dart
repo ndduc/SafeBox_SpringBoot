@@ -7,19 +7,20 @@ import 'package:http/http.dart';
 
 import '../../model/api/ApiResponse.dart';
 import '../../model/api/SafeBoxResponse.dart';
+import '../repository/SafeBoxRepos.dart';
 
 class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
-  final String apiUrl = "http://98.177.3.88:9021/api/safebox";
-  final String apiKey = "Gg63DfuAqMh_Zo8TINm7lXKMdy2FRzIiCV8FjYYdJBM";
   SafeBoxBloc() : super(SafeBoxInitial()) {
     on<GetRecordsEvent>(getSafeBoxRecordEvent);
     on<UpdateSearchOptionEvent>(updateSearchOptionEvent);
   }
 
+  AbstractSafeBoxRepos safeBoxRepos = SafeBoxRepos();
+
   Future<void> getSafeBoxRecordEvent(GetRecordsEvent event, Emitter<SafeBoxState> emit) async {
     try {
       emit(SafeBoxLoading());
-      var res = await getSafeBoxRecord(event.searchText, event.searchOption);
+      var res = await safeBoxRepos.getSafeBoxRecord(event.searchText, event.searchOption);
       if (res.statusCode == 200) {
         SafeBoxResponse apiResponse = SafeBoxResponse.fromJson(jsonDecode(res.body));
         emit(SafeBoxLoaded(data: apiResponse));
@@ -36,14 +37,5 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
   }
 
 
-  Future<Response> getSafeBoxRecord(String searchText, String option) async {
-    var header = {"spring-api-key" : apiKey};
-    var url = "$apiUrl/search-location?l=$searchText&m=$option&s=desc";
-    Response response = await get(
-        Uri.parse(url),
-        headers: header
-    );
-    print(response.body);
-    return response;
-  }
+
 }
