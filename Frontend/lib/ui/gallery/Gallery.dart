@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:safebox/bloc/bloc/GalleryBloc.dart';
+import 'package:safebox/bloc/state/GalleryState.dart';
 
 import '../../bloc/bloc/SafeBoxBloc.dart';
 import '../../bloc/state/SafeBoxState.dart';
@@ -11,12 +13,12 @@ class Gallery extends StatefulWidget {
 }
 
 class _Gallery extends State<Gallery> {
-  late SafeBoxBloc safeBoxBloc;
+  late GalleryBloc galleryBloc;
 
   @override
   void initState() {
     super.initState();
-    safeBoxBloc = SafeBoxBloc();
+    galleryBloc = GalleryBloc();
   }
 
   @override
@@ -30,8 +32,8 @@ class _Gallery extends State<Gallery> {
         appBar: AppBar(
           title: Text('SafeBox'),
         ),
-        body: BlocBuilder<SafeBoxBloc, SafeBoxState>(
-          bloc: safeBoxBloc,
+        body: BlocBuilder<GalleryBloc, GalleryState>(
+          bloc: galleryBloc,
           builder: (context, state) {
             return SizedBox();
           },

@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
+import 'package:safebox/ui/gallery/Gallery.dart';
 import 'package:safebox/ui/safebox/SafeBox.dart';
 
 import 'model/MainMenuUIModel.dart';
 
 String safeBoxKey = "SAFE-BOX";
+String galleryKey = "GALLERY";
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
@@ -18,7 +20,7 @@ class MainMenu extends StatefulWidget {
 class _MainMenu extends State<MainMenu> {
   List<MainMenuUIModel> uiMenuList = [
     MainMenuUIModel(mainTitle: "Safe Box", subTitle: "Manage Credential", key: safeBoxKey, icon: const Icon(Icons.security)),
-    MainMenuUIModel(mainTitle: "Gallery", subTitle: "Photo Viewer", key: safeBoxKey, icon: const Icon(Icons.photo))
+    MainMenuUIModel(mainTitle: "Gallery", subTitle: "Photo Viewer", key: galleryKey, icon: const Icon(Icons.photo))
   ];
 
   @override
@@ -75,6 +77,12 @@ class _MainMenu extends State<MainMenu> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SafeBox()),
+      );
+    }
+    else if (key == galleryKey) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Gallery()),
       );
     }
 

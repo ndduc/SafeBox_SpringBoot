@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:safebox/ui/SimpleBlocUi.dart';
 import 'package:safebox/ui/menu/MainMenu.dart';
-
-import 'bloc/bloc/CounterBloc.dart';
 import 'bloc/bloc/GalleryBloc.dart';
 import 'bloc/bloc/SafeBoxBloc.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -27,7 +24,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter BLoC Example',
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: MainMenu(),
+        home: const MainMenu(),
       ),
     );
   }
