@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/ui/safebox/SafeBox.dart';
 
+import 'model/MainMenuUIModel.dart';
+
+String safeBoxKey = "SAFE-BOX";
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
@@ -13,6 +16,10 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenu extends State<MainMenu> {
+  List<MainMenuUIModel> uiMenuList = [
+    MainMenuUIModel(mainTitle: "Safe Box", subTitle: "Manage Credential", key: safeBoxKey, icon: const Icon(Icons.security))
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,23 +36,23 @@ class _MainMenu extends State<MainMenu> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               childAspectRatio: 5.0,
-              children: List.generate(3, (index) {
+              children: List.generate(uiMenuList.length, (index) {
                 return GestureDetector(
                   onTap: () {
-                    navigateToSafeBox();
+                    navigateToSafeBox(uiMenuList[index].key);
                   },
                   child: Container(
                     alignment: Alignment.center,
                     color: Colors.grey,
                     child: Center(
                       child: ListTile(
-                        leading: Icon(Icons.security),
+                        leading: uiMenuList[index].icon,
                         title: Text(
-                          'Safe Box',
+                          uiMenuList[index].mainTitle,
                           style: TextStyle(fontSize: 25),
                         ),
                         subtitle: Text(
-                          'Credential Manager',
+                          uiMenuList[index].subTitle,
                           style: TextStyle(fontSize: 15),
                         ),
                       )
@@ -62,11 +69,13 @@ class _MainMenu extends State<MainMenu> {
   }
 
 
-  void navigateToSafeBox() {
-    print("TEST");
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SafeBox()),
-    );
+  void navigateToSafeBox(String key) {
+    if (key == safeBoxKey) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SafeBox()),
+      );
+    }
+
   }
 }
