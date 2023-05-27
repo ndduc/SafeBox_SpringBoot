@@ -11,8 +11,8 @@ abstract class AbstractSafeBoxRepos {
 }
 
 class SafeBoxRepos implements AbstractSafeBoxRepos {
-  final String apiUrl = "http://192.168.1.2:9021/api/safebox";
-  final String apiKey = "Gg63DfuAqMh_Zo8TINm7lXKMdy2FRzIiCV8FjYYdJBM";
+  final String apiUrl = "http://54.241.148.142:9021/api/safebox";
+  final String apiKey = "KEY";
 
   @override
   Future<Response> getSafeBoxRecord(String searchText, String option) async {

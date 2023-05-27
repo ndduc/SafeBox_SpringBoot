@@ -6,6 +6,6 @@ services:
       dockerfile: Dockerfile
     container_name: safebox
     ports:
-      - "9021:80"
+      - "9021:9021"
     env_file:
       - safebox.env

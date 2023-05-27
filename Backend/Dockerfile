@@ -13,8 +13,9 @@ COPY . /usr/src/safebox
 # Set the working directory inside the container
 WORKDIR /usr/src/safebox
 
-RUN ./gradlew build
+RUN chmod +x gradlew
 
+RUN ./gradlew build
 
 FROM amazoncorretto:17
 COPY --from=builder /usr/src/safebox/build/libs/safebox*.jar safebox.jar
