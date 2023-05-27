@@ -4,6 +4,7 @@ import 'package:safebox/ui/SimpleBlocUi.dart';
 import 'package:safebox/ui/menu/MainMenu.dart';
 
 import 'bloc/bloc/CounterBloc.dart';
+import 'bloc/bloc/GalleryBloc.dart';
 import 'bloc/bloc/SafeBoxBloc.dart';
 
 void main() {
@@ -16,8 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CounterBloc>(
-          create: (_) => CounterBloc(),
+        BlocProvider<GalleryBloc>(
+          create: (_) => GalleryBloc(),
         ),
         BlocProvider<SafeBoxBloc>(
           create: (_) => SafeBoxBloc(),

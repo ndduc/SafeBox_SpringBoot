@@ -17,7 +17,8 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenu extends State<MainMenu> {
   List<MainMenuUIModel> uiMenuList = [
-    MainMenuUIModel(mainTitle: "Safe Box", subTitle: "Manage Credential", key: safeBoxKey, icon: const Icon(Icons.security))
+    MainMenuUIModel(mainTitle: "Safe Box", subTitle: "Manage Credential", key: safeBoxKey, icon: const Icon(Icons.security)),
+    MainMenuUIModel(mainTitle: "Gallery", subTitle: "Photo Viewer", key: safeBoxKey, icon: const Icon(Icons.photo))
   ];
 
   @override
