@@ -12,7 +12,7 @@ abstract class AbstractSafeBoxRepos {
 
 class SafeBoxRepos implements AbstractSafeBoxRepos {
   final String apiUrl = "http://54.241.148.142:9021/api/safebox";
-  final String apiKey = "KEY";
+  final String apiKey = const String.fromEnvironment('SPRING_API_KEY');
 
   @override
   Future<Response> getSafeBoxRecord(String searchText, String option) async {
