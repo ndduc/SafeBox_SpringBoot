@@ -11,5 +11,6 @@ import java.util.List;
 public interface ISafeBoxService {
     ResponseObject searchSafeBox(String searchText, String option);
     void addUpdateSafeBox(SafeBoxModelDAO dao);
+    void deleteSafeBox(SafeBoxModelDAO dao);
     ResponseObject getSafeBox(String rangeKey);
 }

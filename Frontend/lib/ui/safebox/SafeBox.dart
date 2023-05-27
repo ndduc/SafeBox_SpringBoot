@@ -66,6 +66,9 @@ class _SafeBox extends State<SafeBox> {
 
             print("LOADED");
           }
+          else if (state is SafeBoxPostLoaded) {
+            print("POST LOADED");
+          }
           else if (state is SafeBoxErrorState) {
             print("ERROR\t\t" + state.errorMessage);
           }
@@ -251,12 +254,20 @@ class _SafeBox extends State<SafeBox> {
                                       children: [
                                         TextButton(
                                           child: const Text('Update'),
-                                          onPressed: () {/* ... */},
+                                          onPressed: () {
+                                            var model = safeBoxList[index];
+                                            model.password = passWordControllerList[index].text;
+                                            model.userName = userNameControllerList[index].text;
+                                            safeBoxBloc.add(SaveRecordEvent(model));
+                                          },
                                         ),
                                         const SizedBox(width: 8),
                                         TextButton(
                                           child: const Text('Delete'),
-                                          onPressed: () {/* ... */},
+                                          onPressed: () {
+                                            var model = safeBoxList[index];
+                                            safeBoxBloc.add(DeleteRecordEvent(model));
+                                          },
                                         ),
                                         const SizedBox(width: 8),
                                       ],

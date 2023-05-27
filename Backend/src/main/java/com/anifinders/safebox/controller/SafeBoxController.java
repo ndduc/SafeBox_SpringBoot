@@ -52,7 +52,16 @@ public class SafeBoxController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Api Key");
         }
+    }
 
+    @PostMapping("/delete-safebox")
+    public ResponseEntity<String> deleteUpdateSafeBox(@RequestHeader("spring-api-key") String apiKey, @RequestBody SafeBoxModelDAO model) {
+        if (apiKey.equals(APIKEY)) {
+            safeBoxService.deleteSafeBox(model);
+            return ResponseEntity.ok("OK");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Api Key");
+        }
     }
 
 }

@@ -45,7 +45,6 @@ public class SafeBoxModel {
     }
 
     @DynamoDBHashKey(attributeName = "HashKey")
-
     public String getHashKey() {
         return HashKey;
     }
@@ -55,7 +54,6 @@ public class SafeBoxModel {
     }
 
     @DynamoDBRangeKey(attributeName = "RangeKey")
-
     public String getRangeKey() {
         return RangeKey;
     }
@@ -65,7 +63,6 @@ public class SafeBoxModel {
     }
 
     @DynamoDBAttribute(attributeName = "CreatedDatetime")
-
     public String getCreatedDatetime() {
         return createdDatetime;
     }
@@ -74,7 +71,6 @@ public class SafeBoxModel {
         this.createdDatetime = createdDatetime;
     }
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "GSI_HK_1-GSI_RK_1-index", attributeName ="GSI_HK_1")
-
     public String getGsi_HK_1() {
         return gsi_HK_1;
     }
@@ -83,7 +79,6 @@ public class SafeBoxModel {
         this.gsi_HK_1 = gsi_HK_1;
     }
     @DynamoDBIndexHashKey(globalSecondaryIndexName = "GSI_HK_2-GSI_RK_2-index", attributeName ="GSI_HK_2")
-
     public String getGsi_HK_2() {
         return gsi_HK_2;
     }
@@ -100,7 +95,6 @@ public class SafeBoxModel {
         this.gsi_RK_1 = gsi_RK_1;
     }
     @DynamoDBIndexRangeKey(globalSecondaryIndexName = "GSI_HK_2-GSI_RK_2-index", attributeName ="GSI_RK_2")
-
     public String getGsi_RK_2() {
         return gsi_RK_2;
     }
@@ -109,7 +103,6 @@ public class SafeBoxModel {
         this.gsi_RK_2 = gsi_RK_2;
     }
     @DynamoDBAttribute(attributeName = "Id")
-
     public String getId() {
         return id;
     }
@@ -118,7 +111,6 @@ public class SafeBoxModel {
         this.id = id;
     }
     @DynamoDBAttribute(attributeName = "Location")
-
     public String getLocation() {
         return location;
     }
@@ -127,7 +119,6 @@ public class SafeBoxModel {
         this.location = location;
     }
     @DynamoDBAttribute(attributeName = "ModifiedDatetime")
-
     public String getModifiedDatetime() {
         return modifiedDatetime;
     }
@@ -136,7 +127,6 @@ public class SafeBoxModel {
         this.modifiedDatetime = modifiedDatetime;
     }
     @DynamoDBAttribute(attributeName = "Name")
-
     public String getName() {
         return name;
     }
@@ -145,7 +135,6 @@ public class SafeBoxModel {
         this.name = name;
     }
     @DynamoDBAttribute(attributeName = "Password")
-
     public String getPassword() {
         return password;
     }
@@ -154,7 +143,6 @@ public class SafeBoxModel {
         this.password = password;
     }
     @DynamoDBAttribute(attributeName = "UserName")
-
     public String getUserName() {
         return userName;
     }
@@ -163,7 +151,6 @@ public class SafeBoxModel {
         this.userName = userName;
     }
     @DynamoDBAttribute(attributeName = "Website")
-
     public String getWebsite() {
         return website;
     }

@@ -1,10 +1,10 @@
 class SafeBoxDao {
-  late String hashKey;
-  late String rangeKey;
-  late String createdDatetime;
-  late String id;
+  String hashKey = "";
+  String rangeKey = "";
+  String createdDatetime = "";
+  String id = "";
   late String location;
-  late String modifiedDatetime;
+  String modifiedDatetime = "";
   late String name;
   late String password;
   late String userName;
@@ -21,6 +21,13 @@ class SafeBoxDao {
       required this.password,
       required this.userName,
       required this.website});
+
+  SafeBoxDao.newRecord({
+    required this.location,
+    required this.name,
+    required this.password,
+    required this.userName,
+    required this.website});
 
   factory SafeBoxDao.fromJson(Map<String, dynamic> json) {
     return SafeBoxDao(

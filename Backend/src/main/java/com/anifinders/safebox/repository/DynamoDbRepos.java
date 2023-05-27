@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.anifinders.safebox.helper.dynamo.GsiMapper;
 import com.anifinders.safebox.repository.Interface.IDynamoDbRepos;
 import com.anifinders.safebox.repository.Model.SafeBoxModel;
+import com.anifinders.safebox.repository.Model.SafeBoxModelPost;
 import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.Field;
@@ -68,13 +69,25 @@ public class DynamoDbRepos implements IDynamoDbRepos {
 
 
     public void addUpdateSafeBox(SafeBoxModel model) {
-        putItem(model);
+        putItem(new SafeBoxModelPost(model));
     }
 
     public SafeBoxModel getSafeBox(String hashKey, String rangeKey) {
         var result = getItem(hashKey, rangeKey);
         var dataAfterMapper = dynamoDBMapper.marshallIntoObject(SafeBoxModel.class, result.getItem());
         return dataAfterMapper;
+    }
+
+    public void deleteSafeBox(SafeBoxModel model) {
+        deleteRecord(model.getHashKey(), model.getRangeKey());
+    }
+
+    private void deleteRecord(String hashKey, String rangeKey) {
+        DeleteItemRequest deleteRequest = new DeleteItemRequest()
+                .withTableName(tableName)
+                .addKeyEntry(this.hashKey, new AttributeValue(hashKey))
+                .addKeyEntry(this.rangeKey, new AttributeValue(rangeKey));
+        amazonDynamoDB.deleteItem(deleteRequest);
     }
 
     private GetItemResult getItem(String hashKey, String rangeKey) {
@@ -112,6 +125,11 @@ public class DynamoDbRepos implements IDynamoDbRepos {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Error accessing field value: " + fieldName, e);
             }
+
+            if (fieldValue == null || (fieldValue instanceof String && ((String) fieldValue).isEmpty())) {
+                continue;
+            }
+
             AttributeValue attributeValue = new AttributeValue(fieldValue.toString());
             item.put(attributeName, attributeValue);
         }

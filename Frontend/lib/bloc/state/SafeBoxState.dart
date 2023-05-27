@@ -8,6 +8,10 @@ class SafeBoxLoaded extends SafeBoxState {
   final SafeBoxResponse data;
   SafeBoxLoaded({required this.data});
 }
+class SafeBoxPostLoaded extends SafeBoxState {
+  final String status;
+  SafeBoxPostLoaded({required this.status});
+}
 class SafeBoxErrorState extends SafeBoxState {
   final String errorMessage;
   SafeBoxErrorState({required this.errorMessage});

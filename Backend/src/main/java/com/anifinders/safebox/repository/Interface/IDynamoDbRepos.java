@@ -9,6 +9,6 @@ import java.util.List;
 public interface IDynamoDbRepos {
     List<SafeBoxModel> searchSafeBox(String searchText, String option);
     void addUpdateSafeBox(SafeBoxModel model);
-
+    void deleteSafeBox(SafeBoxModel model);
     SafeBoxModel getSafeBox(String hashKey, String rangeKey);
 }

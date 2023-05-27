@@ -6,7 +6,8 @@ import '../../model/dao/SafeBoxDao.dart';
 
 abstract class AbstractSafeBoxRepos {
   Future<Response> getSafeBoxRecord(String searchText, String option);
-  Future<void> saveSafeBoxRecord(SafeBoxDao data);
+  Future<Response> saveSafeBoxRecord(SafeBoxDao data);
+  Future<Response> deleteSafeBoxRecord(SafeBoxDao data);
 }
 
 class SafeBoxRepos implements AbstractSafeBoxRepos {
@@ -21,28 +22,30 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
         Uri.parse(url),
         headers: header
     );
-    print(response.body);
     return response;
   }
 
-  Future<void> saveSafeBoxRecord(SafeBoxDao data) async {
+  @override
+  Future<Response> saveSafeBoxRecord(SafeBoxDao data) async {
     var header = {
       "spring-api-key" : apiKey,
       "Content-Type" : "application/json"
     };
     var url = "$apiUrl/add-update-safebox";
     var body = jsonEncode(data.toJson());
-    try {
-      var response = await post(Uri.parse(url), headers: header, body: body);
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('POST request successful');
-        print('Response body: ${response.body}');
-      } else {
-        print('POST request failed');
-        print('Response status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      print("Error: $e");
-    }
+    Response response = await post(Uri.parse(url), headers: header, body: body);
+    return response;
+  }
+
+  @override
+  Future<Response> deleteSafeBoxRecord(SafeBoxDao data) async {
+    var header = {
+      "spring-api-key" : apiKey,
+      "Content-Type" : "application/json"
+    };
+    var url = "$apiUrl/delete-safebox";
+    var body = jsonEncode(data.toJson());
+    Response response = await post(Uri.parse(url), headers: header, body: body);
+    return response;
   }
 }

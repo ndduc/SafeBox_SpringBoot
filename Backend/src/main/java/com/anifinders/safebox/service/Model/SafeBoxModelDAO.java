@@ -102,6 +102,10 @@ public class SafeBoxModelDAO {
         this.website = website;
     }
 
+    public SafeBoxModelDAO() {
+
+    }
+
     public SafeBoxModelDAO(SafeBoxModel data) {
         this.hashKey = data.getHashKey();
         this.rangeKey = data.getRangeKey();
@@ -120,7 +124,7 @@ public class SafeBoxModelDAO {
         data.setHashKey("SAFEBOX-ENTITY");
 
         if(!dao.getRangeKey().isEmpty()) {
-            data.setRangeKey(data.getRangeKey());
+            data.setRangeKey(dao.getRangeKey());
         }
         else {
             data.setRangeKey(UUID.randomUUID().toString());
@@ -139,9 +143,9 @@ public class SafeBoxModelDAO {
         data.setLocation(dao.getLocation());
         data.setModifiedDatetime(dao.getModifiedDatetime());
         data.setName(dao.getName());
-        dao.setPassword(dao.getPassword());
-        dao.setUserName(dao.getUserName());
-        dao.setWebsite(dao.getWebsite());
+        data.setPassword(dao.getPassword());
+        data.setUserName(dao.getUserName());
+        data.setWebsite(dao.getWebsite());
 
         return data;
     }

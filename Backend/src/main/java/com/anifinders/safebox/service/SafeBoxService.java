@@ -10,10 +10,7 @@ import com.anifinders.safebox.service.Model.SafeBoxModelDAO;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class SafeBoxService implements ISafeBoxService {
@@ -44,12 +41,20 @@ public class SafeBoxService implements ISafeBoxService {
         return resObject;
     }
 
+    public void deleteSafeBox(SafeBoxModelDAO dao) {
+        SafeBoxModel data = dao.convertToDataModel(dao);
+        this.dynamoDbRepos.deleteSafeBox(data);
+    }
+
     public void addUpdateSafeBox(SafeBoxModelDAO dao) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         if (dao.getCreatedDatetime().isEmpty()) {
             dao.setCreatedDatetime(currentDateTime.toString());
+            dao.setModifiedDatetime(currentDateTime.toString());
+        } else {
+            dao.setModifiedDatetime(currentDateTime.toString());
         }
-        dao.setModifiedDatetime(currentDateTime.toString());
+
 
         SafeBoxModel data = dao.convertToDataModel(dao);
         this.dynamoDbRepos.addUpdateSafeBox(data);

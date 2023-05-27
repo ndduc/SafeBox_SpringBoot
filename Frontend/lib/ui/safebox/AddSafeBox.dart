@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
+import 'package:safebox/model/dao/SafeBoxDao.dart';
 
 class AddSafeBox extends StatefulWidget {
   const AddSafeBox({super.key});
@@ -13,15 +14,25 @@ class AddSafeBox extends StatefulWidget {
 class _AddSafeBox extends State<AddSafeBox> {
   late SafeBoxBloc safeBoxBloc;
 
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController urlController = TextEditingController();
+  TextEditingController groupNameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     safeBoxBloc = SafeBoxBloc();
-    safeBoxBloc.add(GetRecordsEvent("", ""));
   }
 
   @override
   void dispose() {
+    userNameController.dispose();
+    passwordController.dispose();
+    locationController.dispose();
+    urlController.dispose();
+    groupNameController.dispose();
     super.dispose();
   }
 
@@ -34,6 +45,15 @@ class _AddSafeBox extends State<AddSafeBox> {
       body: BlocBuilder<SafeBoxBloc, SafeBoxState>(
         bloc: safeBoxBloc,
         builder: (context, state) {
+          if (state is SafeBoxLoading) {
+
+          }
+          else if (state is SafeBoxPostLoaded) {
+            print("LOADED" + state.status);
+          }
+          else if (state is SafeBoxErrorState) {
+            print("LOADED" + state.errorMessage);
+          }
           return mainBody();
         }
       )
@@ -48,6 +68,7 @@ class _AddSafeBox extends State<AddSafeBox> {
           children: [
             ListTile(
               title: TextField(
+                  controller: userNameController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Username',
@@ -56,6 +77,7 @@ class _AddSafeBox extends State<AddSafeBox> {
             ),
             ListTile(
               title: TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',
@@ -64,6 +86,7 @@ class _AddSafeBox extends State<AddSafeBox> {
             ),
             ListTile(
               title: TextField(
+                  controller: locationController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Location',
@@ -72,6 +95,7 @@ class _AddSafeBox extends State<AddSafeBox> {
             ),
             ListTile(
               title: TextField(
+                  controller: urlController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Url',
@@ -80,6 +104,7 @@ class _AddSafeBox extends State<AddSafeBox> {
             ),
             ListTile(
               title: TextField(
+                  controller: groupNameController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Group',
@@ -91,7 +116,16 @@ class _AddSafeBox extends State<AddSafeBox> {
               children: [
                 TextButton(
                   child: const Text('Save'),
-                  onPressed: () {/* ... */},
+                  onPressed: () {
+                    SafeBoxDao model = SafeBoxDao.newRecord(
+                        location: locationController.text,
+                        name: groupNameController.text,
+                        password: passwordController.text,
+                        userName: userNameController.text,
+                        website: urlController.text);
+                    safeBoxBloc.add(SaveRecordEvent(model));
+
+                  },
                 )
               ],
             )

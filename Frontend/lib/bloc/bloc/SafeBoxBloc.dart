@@ -13,6 +13,8 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
   SafeBoxBloc() : super(SafeBoxInitial()) {
     on<GetRecordsEvent>(getSafeBoxRecordEvent);
     on<UpdateSearchOptionEvent>(updateSearchOptionEvent);
+    on<SaveRecordEvent>(saveSafeBoxRecordEvent);
+    on<DeleteRecordEvent>(deleteSafeBoxRecordEvent);
   }
 
   AbstractSafeBoxRepos safeBoxRepos = SafeBoxRepos();
@@ -24,11 +26,42 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
       if (res.statusCode == 200) {
         SafeBoxResponse apiResponse = SafeBoxResponse.fromJson(jsonDecode(res.body));
         emit(SafeBoxLoaded(data: apiResponse));
-      } else {
+      }
+      else {
         emit(SafeBoxErrorState(errorMessage: "Error While Getting Records"));
       }
     } catch (e) {
-      emit(SafeBoxErrorState(errorMessage: "Error While Getting Records"));
+      emit(SafeBoxErrorState(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> saveSafeBoxRecordEvent(SaveRecordEvent event, Emitter<SafeBoxState> emit) async {
+    try {
+      emit(SafeBoxLoading());
+      var result = await safeBoxRepos.saveSafeBoxRecord(event.data);
+      if (result.statusCode == 200 || result.statusCode == 201) {
+        emit(SafeBoxPostLoaded(status: 'OK'));
+      }
+      else {
+        emit(SafeBoxErrorState(errorMessage: "Error While Saving Records"));
+      }
+    } catch (e) {
+      emit(SafeBoxErrorState(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> deleteSafeBoxRecordEvent(DeleteRecordEvent event, Emitter<SafeBoxState> emit) async {
+    try {
+      emit(SafeBoxLoading());
+      var result = await safeBoxRepos.deleteSafeBoxRecord(event.data);
+      if (result.statusCode == 200 || result.statusCode == 201) {
+        emit(SafeBoxPostLoaded(status: 'OK'));
+      }
+      else {
+        emit(SafeBoxErrorState(errorMessage: "Error While Deleting Records"));
+      }
+    } catch (e) {
+      emit(SafeBoxErrorState(errorMessage: e.toString()));
     }
   }
 
