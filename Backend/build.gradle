@@ -15,9 +15,9 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok:1.18.22'
-	// https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
 	implementation 'com.amazonaws:aws-java-sdk-dynamodb:1.12.464'
-	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation 'software.amazon.awssdk:s3:2.20.74'
+
 	implementation 'com.google.code.gson:gson:2.10.1'
 
 
