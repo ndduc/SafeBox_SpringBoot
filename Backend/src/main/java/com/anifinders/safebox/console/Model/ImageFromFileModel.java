@@ -1,25 +1,19 @@
-package com.anifinders.safebox.repository.Model;
+package com.anifinders.safebox.console.Model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
-import com.anifinders.safebox.console.Model.ImageFromFileModel;
-
-public class GalleryModel {
+public class ImageFromFileModel {
     private String key;
     private String fileName;
+    private byte[] imageBytes;
+
     private String contentType;
     private String extension;
-    // This for base64 image
-    private String imageSource = "";
 
-    public GalleryModel() {
-
-    }
-
-    public GalleryModel(ImageFromFileModel fileModel) {
-        this.key = fileModel.getKey();
-        this.fileName = fileModel.getFileName();
-        this.contentType = fileModel.getContentType();
-        this.extension = fileModel.getExtension();
+    public ImageFromFileModel(String key, String fileName, byte[] imageBytes, String contentType, String extension) {
+        this.key = key;
+        this.fileName = fileName;
+        this.imageBytes = imageBytes;
+        this.contentType = contentType;
+        this.extension = extension;
     }
 
     public String getKey() {
@@ -38,6 +32,14 @@ public class GalleryModel {
         this.fileName = fileName;
     }
 
+    public byte[] getImageBytes() {
+        return imageBytes;
+    }
+
+    public void setImageBytes(byte[] imageBytes) {
+        this.imageBytes = imageBytes;
+    }
+
     public String getContentType() {
         return contentType;
     }
@@ -52,13 +54,5 @@ public class GalleryModel {
 
     public void setExtension(String extension) {
         this.extension = extension;
-    }
-
-    public String getImageSource() {
-        return imageSource;
-    }
-
-    public void setImageSource(String imageSource) {
-        this.imageSource = imageSource;
     }
 }

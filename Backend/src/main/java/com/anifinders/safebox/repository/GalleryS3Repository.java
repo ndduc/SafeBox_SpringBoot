@@ -1,13 +1,17 @@
 package com.anifinders.safebox.repository;
+import com.anifinders.safebox.console.Model.ImageFromFileModel;
 import com.anifinders.safebox.repository.Interface.IGalleryS3Repository;
 import com.anifinders.safebox.repository.Model.GalleryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import software.amazon.awssdk.services.s3.model.UploadPartRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +29,17 @@ public class GalleryS3Repository implements IGalleryS3Repository {
 
     private List<String> testImageList = new ArrayList<>(Arrays.asList("madoka_land.jpg", "madoka_por_l.jpg", "madoka_por.jpg"));
     private final String imageBucket = "hpic-anime";
+
+    public void updateImages(ImageFromFileModel image) {
+        String path = image.getKey() + "/" + image.getFileName() + image.getExtension();
+        PutObjectRequest putRequest = PutObjectRequest.builder()
+                .bucket(imageBucket)
+                .key(path)
+                .contentType(image.getContentType())
+                .build();
+        s3Client.putObject(putRequest, RequestBody.fromBytes(image.getImageBytes()));
+
+    }
 
     public List<GalleryModel> getImages() {
         List<GalleryModel> galleryModelList = new ArrayList<>();

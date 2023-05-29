@@ -1,7 +1,13 @@
 package com.anifinders.safebox.service;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.anifinders.safebox.console.AddImageToS3AndDynamo;
+import com.anifinders.safebox.console.interfaces.IAddImageToS3AndDynamo;
+import com.anifinders.safebox.repository.GalleryDynamoRepository;
 import com.anifinders.safebox.repository.GalleryS3Repository;
+import com.anifinders.safebox.repository.Interface.IGalleryDynamoRepository;
 import com.anifinders.safebox.repository.Interface.IGalleryS3Repository;
+import com.anifinders.safebox.repository.Model.GalleryModel;
 import com.anifinders.safebox.service.Interface.IGalleryService;
 import com.anifinders.safebox.service.Model.GalleryModelDAO;
 import com.anifinders.safebox.service.Model.ResponseObject;
@@ -15,9 +21,14 @@ import java.util.List;
 @Service
 public class GalleryService implements IGalleryService {
     private IGalleryS3Repository galleryS3Repository;
+    private IAddImageToS3AndDynamo addImageToS3AndDynamo;
+    private IGalleryDynamoRepository galleryDynamoRepository;
 
-    public GalleryService(S3Client s3Client) {
+    public GalleryService(AmazonDynamoDB amazonDynamoDB, S3Client s3Client) {
+
         this.galleryS3Repository = new GalleryS3Repository(s3Client);
+        this.addImageToS3AndDynamo = new AddImageToS3AndDynamo();
+        this.galleryDynamoRepository = new GalleryDynamoRepository(amazonDynamoDB);
     }
 
     public String getImageByKey() {
@@ -42,4 +53,12 @@ public class GalleryService implements IGalleryService {
         return responseObject;
     }
 
+    public void UploadImageFromDirectory() {
+        var images = this.addImageToS3AndDynamo.readImagesFromFile("PATH");
+        for(int i = 0; i < images.size(); i++) {
+            this.galleryS3Repository.updateImages(images.get(i));
+            var model = new GalleryModel(images.get(i));
+            this.galleryDynamoRepository.putItemWithJsonModel(model);
+        }
+    }
 }
