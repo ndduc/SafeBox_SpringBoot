@@ -32,7 +32,7 @@ public class GalleryService implements IGalleryService {
     }
 
     public String getImageByKey() {
-       return galleryS3Repository.getImageByKey();
+       return galleryS3Repository.getImageByKey("test");
     }
 
     public ResponseObject<List<GalleryModelDAO>> getImages() {
@@ -53,12 +53,37 @@ public class GalleryService implements IGalleryService {
         return responseObject;
     }
 
+    public  ResponseObject<List<GalleryModelDAO>> getImagesQuery() {
+        ResponseObject<List<GalleryModelDAO>> responseObject = new ResponseObject<>();
+        List<GalleryModelDAO> daoList = new ArrayList<>();
+        try {
+            var results = this.galleryDynamoRepository.getImagesByQuery();
+            for(int i = 0; i < results.size(); i++) {
+                String key = results.get(i).getKey() + "/" + results.get(i).getFileName() + results.get(i).getExtension();
+                var itemBased64 = galleryS3Repository.getImageByKey(key);
+                results.get(i).setImageSource(itemBased64);
+                GalleryModelDAO dao = new GalleryModelDAO(results.get(i));
+                daoList.add(dao);
+            }
+            responseObject.setDataObject(daoList);
+        } catch (Exception e) {
+            responseObject.setErrors(new ArrayList<>(Arrays.asList(e.getMessage())));
+        }
+
+        return responseObject;
+    }
+
     public void UploadImageFromDirectory() {
-        var images = this.addImageToS3AndDynamo.readImagesFromFile("PATH");
+        var images = this.addImageToS3AndDynamo.readImagesFromFile("C:\\Users\\ndduc\\Desktop\\Safebox\\SafeBox_SpringBoot\\Frontend\\assets\\images");
         for(int i = 0; i < images.size(); i++) {
-            this.galleryS3Repository.updateImages(images.get(i));
-            var model = new GalleryModel(images.get(i));
-            this.galleryDynamoRepository.putItemWithJsonModel(model);
+            try {
+                this.galleryS3Repository.updateImages(images.get(i));
+                var model = new GalleryModel(images.get(i));
+                this.galleryDynamoRepository.putItemWithJsonModel(model);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

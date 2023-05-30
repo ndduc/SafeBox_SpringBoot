@@ -40,7 +40,7 @@ public class AddImageToS3AndDynamo implements IAddImageToS3AndDynamo {
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         ImageIO.write(image, "png", outputStream);
                         byte[] pngBytes = outputStream.toByteArray();
-                        ImageFromFileModel imageModel = new ImageFromFileModel(uniqueId.toString(), fileName, pngBytes, "image/png", ".png");
+                        ImageFromFileModel imageModel = new ImageFromFileModel(uniqueId.toString(), "original", pngBytes, "image/png", ".png");
                         imageList.add(imageModel);
                     } catch (Exception e) {
                         // error

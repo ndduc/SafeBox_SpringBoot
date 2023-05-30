@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface IGalleryS3Repository {
-    String getImageByKey();
+    String getImageByKey(String key);
     List<GalleryModel> getImages();
     void updateImages(ImageFromFileModel image);
 }

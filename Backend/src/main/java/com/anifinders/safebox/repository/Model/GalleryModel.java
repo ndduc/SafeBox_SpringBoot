@@ -11,6 +11,8 @@ public class GalleryModel {
     // This for base64 image
     private String imageSource = "";
 
+    private String timeStamp;
+
     public GalleryModel() {
 
     }
@@ -60,5 +62,13 @@ public class GalleryModel {
 
     public void setImageSource(String imageSource) {
         this.imageSource = imageSource;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

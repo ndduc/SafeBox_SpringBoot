@@ -8,6 +8,14 @@ import java.util.List;
 
 @Service
 public interface IGalleryService {
+
+    @Deprecated
     String getImageByKey();
+
+    @Deprecated
     ResponseObject<List<GalleryModelDAO>> getImages();
+
+    void UploadImageFromDirectory();
+
+    ResponseObject<List<GalleryModelDAO>> getImagesQuery();
 }

@@ -59,10 +59,10 @@ public class GalleryS3Repository implements IGalleryS3Repository {
 
         return galleryModelList;
     }
-    public String getImageByKey() {
+    public String getImageByKey(String key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(imageBucket)
-                .key("madoka_land.jpg")
+                .key(key)
                 .build();
 
         ResponseBytes<GetObjectResponse> getObjectResponse = s3Client.getObjectAsBytes(getObjectRequest);

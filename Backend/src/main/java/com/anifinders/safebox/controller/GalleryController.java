@@ -44,7 +44,7 @@ public class GalleryController {
     public ResponseEntity<ResponseObject<List<GalleryModelDAO>>> getImageList(@RequestHeader("spring-api-key") String apiKey) {
         ResponseObject<List<GalleryModelDAO>> response = new ResponseObject<>();
         if (apiKey.equals(APIKEY)) {
-            response = galleryService.getImages();
+            response = galleryService.getImagesQuery();
             return ResponseEntity.ok(response);
         } else {
             String errorMessage = "Unauthorized access: Invalid API key.";
@@ -54,4 +54,18 @@ public class GalleryController {
         }
 
     }
+
+    @GetMapping(path = "/upload-image-console")
+    public ResponseEntity<String> UploadImageFromDirectory(@RequestHeader("spring-api-key") String apiKey) {
+        if (apiKey.equals(APIKEY)) {
+            galleryService.UploadImageFromDirectory();
+            return ResponseEntity.ok("OK");
+        } else {
+            String errorMessage = "Unauthorized access: Invalid API key.";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(errorMessage);
+        }
+
+    }
+
 }
