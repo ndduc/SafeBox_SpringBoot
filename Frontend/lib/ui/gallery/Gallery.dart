@@ -1,13 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:safebox/bloc/bloc/GalleryBloc.dart';
+import 'package:safebox/bloc/event/GalleryEvent.dart';
 import 'package:safebox/bloc/state/GalleryState.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../../bloc/bloc/SafeBoxBloc.dart';
 import '../../bloc/state/SafeBoxState.dart';
+import '../../model/dao/GalleryImageDao.dart';
 import '../../model/dao/GalleryItemDao.dart';
 
 class Gallery extends StatefulWidget {
@@ -23,10 +27,13 @@ class _Gallery extends State<Gallery> {
     new GalleryItemDao(id: "3", resource: "assets/images/madoka_land.jpg"),
   ];
 
+  List<GalleryImageDao> galleryItemListFromApi = [];
+
   @override
   void initState() {
     super.initState();
     galleryBloc = GalleryBloc();
+    galleryBloc.add(GetGalleryImagesEvent());
   }
 
   @override
@@ -43,6 +50,9 @@ class _Gallery extends State<Gallery> {
         body: BlocBuilder<GalleryBloc, GalleryState>(
           bloc: galleryBloc,
           builder: (context, state) {
+            if (state is GalleryImagesLoaded) {
+              galleryItemListFromApi = state.data.dataObject;
+            }
             return slideShowViewer();
           },
         )
@@ -64,12 +74,12 @@ class _Gallery extends State<Gallery> {
           scrollPhysics: const BouncingScrollPhysics(),
           builder: (BuildContext context, int index) {
             return PhotoViewGalleryPageOptions(
-              imageProvider: AssetImage(galleryItemList[index].resource),
+              imageProvider: MemoryImage(base64Decode(galleryItemListFromApi[index].imageSource)), //AssetImage(galleryItemList[index].resource),
               initialScale: PhotoViewComputedScale.contained * 0.8,
-              heroAttributes: PhotoViewHeroAttributes(tag: galleryItemList[index].id),
+              heroAttributes: PhotoViewHeroAttributes(tag: galleryItemListFromApi[index].key),
             );
           },
-          itemCount: galleryItemList.length,
+          itemCount: galleryItemListFromApi.length,
           // loadingBuilder: (context, event) => Center(
           //   child: Container(
           //     width: 20.0,
