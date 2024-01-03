@@ -8,6 +8,7 @@ import 'package:clipboard/clipboard.dart';
 
 import '../../model/dao/SafeBoxDao.dart';
 import 'AddSafeBox.dart';
+import 'EditSafeBox.dart';
 
 List<String> searchOptionList = ['Location', 'User'];
 
@@ -299,6 +300,7 @@ class _SafeBox extends State<SafeBox> {
                   TextButton(
                     child: const Text('Edit'),
                     onPressed: () {
+                      navigateToEditSafeBox(safeBoxList[index].name, safeBoxList[index].location, safeBoxList[index].id);
                     },
                   ),
                   const SizedBox(width: 8),
@@ -321,6 +323,13 @@ class _SafeBox extends State<SafeBox> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => AddSafeBox()),
+    );
+  }
+
+  void navigateToEditSafeBox(String name, String location, String id) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditSafeBox(name: name, location: location, id: id)),
     );
   }
 

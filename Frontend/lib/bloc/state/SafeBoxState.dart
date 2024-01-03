@@ -1,4 +1,7 @@
+import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
+
 import '../../model/api/SafeBoxResponse.dart';
+import '../../model/dao/SafeBoxDao.dart';
 
 abstract class SafeBoxState {}
 
@@ -34,4 +37,14 @@ class SafeBoxHideUnHidePasswordState extends SafeBoxState {
 class SafeBoxHideUnHidePasswordStateSingleField extends SafeBoxState {
   bool hide = true;
   SafeBoxHideUnHidePasswordStateSingleField(this.hide);
+}
+
+class SafeBoxGetSpecificSafeBoxRecordHiveByIdLoaded extends SafeBoxState {
+  final SafeBoxDao safebox;
+  SafeBoxGetSpecificSafeBoxRecordHiveByIdLoaded(this.safebox);
+}
+
+class SafeBoxGetSpecificSafeBoxRecordHiveByIdError extends SafeBoxState {
+  final String errorMessage;
+  SafeBoxGetSpecificSafeBoxRecordHiveByIdError({required this.errorMessage});
 }

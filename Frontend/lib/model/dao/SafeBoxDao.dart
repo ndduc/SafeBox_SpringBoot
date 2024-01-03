@@ -1,3 +1,5 @@
+import '../../hive-data/hive-model/SafeBoxModel.dart';
+
 class SafeBoxDao {
   String hashKey = "";
   String rangeKey = "";
@@ -9,6 +11,7 @@ class SafeBoxDao {
   late String password;
   late String userName;
   late String website;
+  late String note;
 
   SafeBoxDao({
       required this.hashKey,
@@ -20,14 +23,16 @@ class SafeBoxDao {
       required this.name,
       required this.password,
       required this.userName,
-      required this.website});
+      required this.website,
+      required this.note});
 
   SafeBoxDao.newRecord({
     required this.location,
     required this.name,
     required this.password,
     required this.userName,
-    required this.website});
+    required this.website,
+    required this.note});
 
   factory SafeBoxDao.fromJson(Map<String, dynamic> json) {
     return SafeBoxDao(
@@ -40,7 +45,24 @@ class SafeBoxDao {
       name: json['name'],
       password: json['password'],
       userName: json['userName'],
-      website: json['website']
+      website: json['website'],
+      note: json['note']
+    );
+  }
+
+  factory SafeBoxDao.fromHiveModel(SafeBoxModel model) {
+    return SafeBoxDao(
+        hashKey: model.hashKey,
+        rangeKey: model.rangeKey,
+        createdDatetime: model.createdDateTime,
+        id: model.id,
+        location: model.location!,
+        modifiedDatetime: model.modifiedDateTime,
+        name: model.name!,
+        password: model.password,
+        userName: model.userName,
+        website: model.website!,
+        note: model.note ?? ""
     );
   }
 
@@ -55,7 +77,8 @@ class SafeBoxDao {
       'name': name,
       'password': password,
       'userName': userName,
-      'website': website
+      'website': website,
+      'note': note
     };
   }
 

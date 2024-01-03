@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
+import 'package:safebox/ui/safebox/SafeBox.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../model/dao/SafeBoxDao.dart';
@@ -13,6 +14,7 @@ abstract class AbstractSafeBoxRepos {
   Future<Response> saveSafeBoxRecord(SafeBoxDao data);
   Future<Response> deleteSafeBoxRecord(SafeBoxDao data);
   List<SafeBoxDao> getSafeBoxRecordHive(String searchText, String option);
+  SafeBoxDao getSpecificSafeBoxRecordHiveById(String name, String location, String id);
 }
 
 class SafeBoxRepos implements AbstractSafeBoxRepos {
@@ -30,9 +32,17 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
     return response;
   }
 
+  SafeBoxDao getSpecificSafeBoxRecordHiveById(String name, String location, String id) {
+    String rk = "$name-$location-$id";
+    print(rk);
+    SafeBoxModel? result =  Hive.box<SafeBoxModel>('safebox').get(rk);
+    print(result.toString());
+
+    return SafeBoxDao.fromHiveModel(result!);
+  }
+
   List<SafeBoxDao> getSafeBoxRecordHive(String searchText, String option) {
     Iterable<SafeBoxModel> result;
-    print(option);
     if (option.toUpperCase() == 'LOCATION') {
       result =  Hive.box<SafeBoxModel>('safebox').values.where((x) => x.location?.toLowerCase() == searchText.toLowerCase());
     } else if (option.toUpperCase() == 'USER') {
@@ -61,6 +71,7 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
         password: model.password,
         userName: model.userName,
         website: model.website ?? "",
+        note: model.note ?? ""
       );
 
       daos.add(dao);
@@ -112,8 +123,8 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
     safe.location = data.location;
     safe.name = data.name;
     safe.website = data.website;
-    var saved = await Hive.box<SafeBoxModel>('safebox').add(safe);
-    print(saved);
+    safe.note = data.note;
+    await Hive.box<SafeBoxModel>('safebox').put(rk, safe);
   }
 
   @override

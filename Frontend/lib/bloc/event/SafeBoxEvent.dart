@@ -1,3 +1,4 @@
+import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
 import 'package:safebox/model/dao/SafeBoxDao.dart';
 
 abstract class SafeBoxEvent {}
@@ -32,4 +33,11 @@ class HideUnHidePasswordEvent extends SafeBoxEvent {
 class HideUnHidePasswordEventSingleField extends SafeBoxEvent {
   bool hide = true;
   HideUnHidePasswordEventSingleField(this.hide);
+}
+
+class GetSpecificSafeBoxRecordHiveByIdEvent extends SafeBoxEvent {
+  final String name;
+  final String location;
+  final String id;
+  GetSpecificSafeBoxRecordHiveByIdEvent({required this.name, required this.location, required this.id});
 }

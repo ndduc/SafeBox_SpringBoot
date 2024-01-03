@@ -4,14 +4,18 @@ import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
 import 'package:safebox/model/dao/SafeBoxDao.dart';
+import 'package:safebox/ui/safebox/SafeBox.dart';
 
-class AddSafeBox extends StatefulWidget {
-  const AddSafeBox({super.key});
+class EditSafeBox extends StatefulWidget {
+  final String name;
+  final String location;
+  final String id;
+  const EditSafeBox({super.key, required this.name, required this.location, required this.id});
   @override
-  _AddSafeBox createState() => _AddSafeBox();
+  _EditSafeBox createState() => _EditSafeBox();
 }
 
-class _AddSafeBox extends State<AddSafeBox> {
+class _EditSafeBox extends State<EditSafeBox> {
   late SafeBoxBloc safeBoxBloc;
 
   TextEditingController userNameController = TextEditingController();
@@ -26,6 +30,7 @@ class _AddSafeBox extends State<AddSafeBox> {
 
   bool _isTextHiddenPassword = true;
 
+  late SafeBoxDao safeBoxDao;
 
   @override
   void initState() {
@@ -42,6 +47,7 @@ class _AddSafeBox extends State<AddSafeBox> {
     });
 
     safeBoxBloc = SafeBoxBloc();
+    safeBoxBloc.add(GetSpecificSafeBoxRecordHiveByIdEvent(name: widget.name, location: widget.location, id: widget.id));
   }
 
   @override
@@ -60,27 +66,39 @@ class _AddSafeBox extends State<AddSafeBox> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: Text('SafeBox'),
-      ),
-      body: BlocBuilder<SafeBoxBloc, SafeBoxState>(
-        bloc: safeBoxBloc,
-        builder: (context, state) {
-          if (state is SafeBoxLoading) {
+          title: Text('SafeBox'),
+        ),
+        body: BlocBuilder<SafeBoxBloc, SafeBoxState>(
+            bloc: safeBoxBloc,
+            builder: (context, state) {
+              if (state is SafeBoxLoading) {
 
-          }
-          else if (state is SafeBoxPostLoaded) {
-            print("LOADED" + state.status);
-          }
-          else if (state is SafeBoxErrorState) {
-            print("LOADED" + state.errorMessage);
-          }
-          else if (state is SafeBoxHideUnHidePasswordStateSingleField) {
-            _isTextHiddenPassword = state.hide;
-          }
-          return mainBody();
-        }
-      )
+              }
+              else if (state is SafeBoxGetSpecificSafeBoxRecordHiveByIdLoaded) {
+                print("LOADED");
+                safeBoxDao = state.safebox;
+                print(safeBoxDao.id);
+
+                loadData();
+              }
+              else if (state is SafeBoxGetSpecificSafeBoxRecordHiveByIdError) {
+              }
+              else if (state is SafeBoxHideUnHidePasswordStateSingleField) {
+                _isTextHiddenPassword = state.hide;
+              }
+              return mainBody();
+            }
+        )
     );
+  }
+
+  void loadData() {
+    userNameController.text = safeBoxDao.name;
+    passwordController.text = safeBoxDao.password;
+    locationController.text = safeBoxDao.location;
+    urlController.text = safeBoxDao.website;
+    groupNameController.text = safeBoxDao.name;
+    noteController.text = safeBoxDao.note;
   }
 
 
@@ -94,13 +112,13 @@ class _AddSafeBox extends State<AddSafeBox> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: TextField(
-                      controller: userNameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Username',
-                      )
-                  )
+                    title: TextField(
+                        controller: userNameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Username',
+                        )
+                    )
                 ),
                 ListTile(
                   title: TextField(
@@ -152,8 +170,7 @@ class _AddSafeBox extends State<AddSafeBox> {
                   ),
                 ),
                 ListTile(
-                  title:
-                     TextField(
+                  title: TextField(
                       controller: noteController,
                       focusNode: noteFocusNode,
                       decoration: InputDecoration(
@@ -163,6 +180,7 @@ class _AddSafeBox extends State<AddSafeBox> {
                       keyboardType: TextInputType.multiline,
                       maxLines: 5, // Allows the field to expand dynamically
                     ),
+
                 ),
 
                 Row(

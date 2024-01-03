@@ -8,6 +8,7 @@ import 'package:http/http.dart';
 
 import '../../model/api/ApiResponse.dart';
 import '../../model/api/SafeBoxResponse.dart';
+import '../event/SafeBoxEvent.dart';
 import '../repository/SafeBoxRepos.dart';
 
 class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
@@ -18,9 +19,23 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
     on<DeleteRecordEvent>(deleteSafeBoxRecordEvent);
     on<HideUnHidePasswordEvent>(hideUnHidePasswordEvent);
     on<HideUnHidePasswordEventSingleField>(hideUnHidePasswordEventPassword);
+    on<GetSpecificSafeBoxRecordHiveByIdEvent>(getSpecificSafeBoxRecordHiveByIdEvent);
   }
 
   AbstractSafeBoxRepos safeBoxRepos = SafeBoxRepos();
+
+  void getSpecificSafeBoxRecordHiveByIdEvent(GetSpecificSafeBoxRecordHiveByIdEvent event, Emitter<SafeBoxState> emit) {
+    try {
+      emit(SafeBoxLoading());
+      print('printed 1');
+
+      var result = safeBoxRepos.getSpecificSafeBoxRecordHiveById(event.name, event.location, event.id);
+      print('printed 2');
+      emit(SafeBoxGetSpecificSafeBoxRecordHiveByIdLoaded(result));
+    } catch(e) {
+      emit(SafeBoxGetSpecificSafeBoxRecordHiveByIdError(errorMessage: e.toString()));
+    }
+  }
 
   Future<void> getSafeBoxRecordEvent(GetRecordsEvent event, Emitter<SafeBoxState> emit) async {
     try {
