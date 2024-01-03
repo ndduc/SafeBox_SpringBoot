@@ -5,5 +5,5 @@ import com.anifinders.safebox.console.Model.ImageFromFileModel;
 import java.util.List;
 
 public interface IAddImageToS3AndDynamo {
-    List<ImageFromFileModel> readImagesFromFile(String directoryPath);
+    List<ImageFromFileModel> readImagesFromFile(String directoryPath,  boolean isSubDirAvail);
 }

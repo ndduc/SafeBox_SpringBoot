@@ -28,3 +28,8 @@ class HideUnHidePasswordEvent extends SafeBoxEvent {
   final int index;
   HideUnHidePasswordEvent(this.index, this.hide);
 }
+
+class HideUnHidePasswordEventSingleField extends SafeBoxEvent {
+  bool hide = true;
+  HideUnHidePasswordEventSingleField(this.hide);
+}

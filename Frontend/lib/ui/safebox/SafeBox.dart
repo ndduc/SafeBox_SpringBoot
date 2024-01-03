@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
@@ -32,6 +33,7 @@ class _SafeBox extends State<SafeBox> {
     super.initState();
     safeBoxBloc = SafeBoxBloc();
     safeBoxBloc.add(GetRecordsEvent("", ""));
+
   }
 
   @override
@@ -259,7 +261,7 @@ class _SafeBox extends State<SafeBox> {
                               },
                             ),
                             IconButton(
-                              icon: Icon(Icons.hide_source),
+                              icon: Icon(credCartPasswordMap[index]! ? Icons.visibility_off : Icons.visibility),
                               onPressed: () {
                                 safeBoxBloc.add(HideUnHidePasswordEvent(index, !credCartPasswordMap[index]!));
                                 // Perform delete action
@@ -285,12 +287,18 @@ class _SafeBox extends State<SafeBox> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    child: const Text('Update'),
+                    child: const Text('Quick Update'),
                     onPressed: () {
                       var model = safeBoxList[index];
                       model.password = passWordControllerList[index].text;
                       model.userName = userNameControllerList[index].text;
                       safeBoxBloc.add(SaveRecordEvent(model));
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    child: const Text('Edit'),
+                    onPressed: () {
                     },
                   ),
                   const SizedBox(width: 8),

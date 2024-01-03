@@ -30,3 +30,8 @@ class SafeBoxHideUnHidePasswordState extends SafeBoxState {
   final int index;
   SafeBoxHideUnHidePasswordState(this.index, this.hide);
 }
+
+class SafeBoxHideUnHidePasswordStateSingleField extends SafeBoxState {
+  bool hide = true;
+  SafeBoxHideUnHidePasswordStateSingleField(this.hide);
+}

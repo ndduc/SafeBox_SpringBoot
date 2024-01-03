@@ -23,6 +23,7 @@ public class GalleryService implements IGalleryService {
     private IGalleryS3Repository galleryS3Repository;
     private IAddImageToS3AndDynamo addImageToS3AndDynamo;
     private IGalleryDynamoRepository galleryDynamoRepository;
+    private final String emptyString = "";
 
     public GalleryService(AmazonDynamoDB amazonDynamoDB, S3Client s3Client) {
 
@@ -59,7 +60,16 @@ public class GalleryService implements IGalleryService {
         try {
             var results = this.galleryDynamoRepository.getImagesByQuery();
             for(int i = 0; i < results.size(); i++) {
-                String key = results.get(i).getKey() + "/" + results.get(i).getFileName() + results.get(i).getExtension();
+                String key = "";
+                if (results.get(i).getAuthor().isEmpty()) {
+                    key = results.get(i).getKey() + "/" + results.get(i).getFileName() + results.get(i).getExtension();
+                } else {
+                    key = results.get(i).getAuthor() + "/"
+                            + results.get(i).getSubDirectoryName() + "/"
+                            + results.get(i).getKey() + "/"
+                            + results.get(i).getFileName()
+                            + results.get(i).getExtension();
+                }
                 var itemBased64 = galleryS3Repository.getImageByKey(key);
                 results.get(i).setImageSource(itemBased64);
                 GalleryModelDAO dao = new GalleryModelDAO(results.get(i));
@@ -74,11 +84,12 @@ public class GalleryService implements IGalleryService {
     }
 
     public void UploadImageFromDirectory() {
-        var images = this.addImageToS3AndDynamo.readImagesFromFile("C:\\Users\\ndduc\\Desktop\\Safebox\\SafeBox_SpringBoot\\Frontend\\assets\\images");
+        boolean isSubDir = true;
+        var images = this.addImageToS3AndDynamo.readImagesFromFile("I:\\Storage\\Image\\dksha19\\dumb", isSubDir);
         for(int i = 0; i < images.size(); i++) {
             try {
-                this.galleryS3Repository.updateImages(images.get(i));
-                var model = new GalleryModel(images.get(i));
+                this.galleryS3Repository.updateImages(images.get(i), isSubDir);
+                var model = new GalleryModel(images.get(i), emptyString, emptyString, images.get(i).getType());
                 this.galleryDynamoRepository.putItemWithJsonModel(model);
             } catch (Exception e) {
                 e.printStackTrace();

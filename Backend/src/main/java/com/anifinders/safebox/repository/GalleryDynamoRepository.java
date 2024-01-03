@@ -24,9 +24,20 @@ public class GalleryDynamoRepository implements IGalleryDynamoRepository {
 
     private final String rangeKey = "RangeKey";
     private final String hashKey = "HashKey";
+    private final String gsi1_hk = "GSI_HK_1";
+    private final String gsi1_rk = "GSI_RK_1";
+    private final String gsi2_hk = "GSI_HK_2";
+    private final String gsi2_rk = "GSI_RK_2";
+    private final String gsi3_hk = "GSI_HK_3";
+    private final String gsi3_rk = "GSI_RK_3";
+
+    private final String gsi1HKValue = "AUTHOR";
+    private final String gsi2HKValue = "SERIES";
+    private final String gsi3HKValue = "CHARACTER";
     private final String dataObject = "DataObject";
     private final String hkKeyValue = "Gallery_Anime";
     private final String timeStamp = "TimeStamp";
+    private final String searchText = "SearchText";
 
     public GalleryDynamoRepository(
             AmazonDynamoDB amazonDynamoDB
@@ -48,6 +59,26 @@ public class GalleryDynamoRepository implements IGalleryDynamoRepository {
         item.put(rangeKey, new AttributeValue(model.getKey()));
         item.put(dataObject, new AttributeValue(objectString));
         item.put(timeStamp, new AttributeValue(model.getTimeStamp()));
+
+        if (!model.getSearchText().isEmpty()) {
+            item.put(searchText, new AttributeValue(model.getSearchText().replaceAll("_.+$", "")));
+        }
+
+        if (!model.getAuthor().isEmpty()) {
+            item.put(gsi1_hk, new AttributeValue(gsi1HKValue));
+            item.put(gsi1_rk, new AttributeValue(model.getAuthor()));
+        }
+
+        if (!model.getSeries().isEmpty()) {
+            item.put(gsi2_hk, new AttributeValue(gsi2HKValue));
+            item.put(gsi2_rk, new AttributeValue(model.getAuthor()));
+        }
+
+        if (!model.getCharacter().isEmpty()) {
+            item.put(gsi3_hk, new AttributeValue(gsi3HKValue));
+            item.put(gsi3_rk, new AttributeValue(model.getAuthor()));
+        }
+
         PutItemRequest putRequest = new PutItemRequest()
                 .withTableName(tableName)
                 .withItem(item);
@@ -76,8 +107,14 @@ public class GalleryDynamoRepository implements IGalleryDynamoRepository {
                         Map.of(
                                 ":value1", new AttributeValue().withS(hashKey)
                         )
-                );
-        return amazonDynamoDB.query(queryRequest);
+                ).withLimit(6);
+        QueryResult result;
+        do {
+            result = amazonDynamoDB.query(queryRequest);
+            queryRequest.setExclusiveStartKey(result.getLastEvaluatedKey());
+        }
+        while (result.getLastEvaluatedKey() != null);
+        return result;
     }
 
 }

@@ -30,8 +30,14 @@ public class GalleryS3Repository implements IGalleryS3Repository {
     private List<String> testImageList = new ArrayList<>(Arrays.asList("madoka_land.jpg", "madoka_por_l.jpg", "madoka_por.jpg"));
     private final String imageBucket = "hpic-anime";
 
-    public void updateImages(ImageFromFileModel image) {
-        String path = image.getKey() + "/" + image.getFileName() + image.getExtension();
+    public void updateImages(ImageFromFileModel image, boolean isSubDir) {
+        String path = "";
+        if (!isSubDir) {
+            path = image.getKey() + "/" + image.getFileName() + image.getExtension();
+        }
+        else {
+            path = image.getAuthor() + "/" + image.getType() + "/" + image.getKey() + "/" + image.getFileName() + image.getExtension();
+        }
         PutObjectRequest putRequest = PutObjectRequest.builder()
                 .bucket(imageBucket)
                 .key(path)

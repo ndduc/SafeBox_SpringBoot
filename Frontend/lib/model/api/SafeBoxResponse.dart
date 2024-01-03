@@ -1,17 +1,21 @@
 import 'package:safebox/model/api/ApiResponse.dart';
 import 'package:safebox/model/dao/SafeBoxDao.dart';
 
+import '../../hive-data/hive-model/SafeBoxModel.dart';
+
+
 class SafeBoxResponse extends ApiResponse {
 
   @override
   final List<SafeBoxDao> dataObject;
   @override
   final List<String> errors;
-
+  
   SafeBoxResponse({
     required this.dataObject,
     required this.errors,
   }) : super(dataObject, errors);
+
 
   factory SafeBoxResponse.fromJson(Map<String, dynamic> json) {
     return SafeBoxResponse(
@@ -21,4 +25,11 @@ class SafeBoxResponse extends ApiResponse {
       errors: (json['errors'] as List<dynamic>).cast<String>(),
     );
   }
+  
+  
+  factory SafeBoxResponse.fromHive(List<SafeBoxDao> hiveList) {
+    return SafeBoxResponse(dataObject: hiveList, errors: []);
+  }
+
+
 }

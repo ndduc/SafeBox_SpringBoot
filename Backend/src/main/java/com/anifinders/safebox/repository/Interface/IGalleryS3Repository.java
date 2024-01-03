@@ -10,5 +10,5 @@ import java.util.List;
 public interface IGalleryS3Repository {
     String getImageByKey(String key);
     List<GalleryModel> getImages();
-    void updateImages(ImageFromFileModel image);
+    void updateImages(ImageFromFileModel image, boolean isSubDir);
 }

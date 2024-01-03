@@ -8,12 +8,19 @@ public class ImageFromFileModel {
     private String contentType;
     private String extension;
 
-    public ImageFromFileModel(String key, String fileName, byte[] imageBytes, String contentType, String extension) {
+    private String author;
+    private String type;
+
+    public ImageFromFileModel(String key, String fileName, byte[] imageBytes,
+                              String contentType, String extension,
+                              String author, String type) {
         this.key = key;
         this.fileName = fileName;
         this.imageBytes = imageBytes;
         this.contentType = contentType;
         this.extension = extension;
+        this.author = author;
+        this.type = type;
     }
 
     public String getKey() {
@@ -54,5 +61,21 @@ public class ImageFromFileModel {
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

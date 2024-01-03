@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
 import 'package:http/http.dart';
@@ -16,6 +17,7 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
     on<SaveRecordEvent>(saveSafeBoxRecordEvent);
     on<DeleteRecordEvent>(deleteSafeBoxRecordEvent);
     on<HideUnHidePasswordEvent>(hideUnHidePasswordEvent);
+    on<HideUnHidePasswordEventSingleField>(hideUnHidePasswordEventPassword);
   }
 
   AbstractSafeBoxRepos safeBoxRepos = SafeBoxRepos();
@@ -23,14 +25,22 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
   Future<void> getSafeBoxRecordEvent(GetRecordsEvent event, Emitter<SafeBoxState> emit) async {
     try {
       emit(SafeBoxLoading());
-      var res = await safeBoxRepos.getSafeBoxRecord(event.searchText, event.searchOption);
-      if (res.statusCode == 200) {
-        SafeBoxResponse apiResponse = SafeBoxResponse.fromJson(jsonDecode(res.body));
-        emit(SafeBoxLoaded(data: apiResponse));
-      }
-      else {
-        emit(SafeBoxErrorState(errorMessage: "Error While Getting Records"));
-      }
+     // var res = await safeBoxRepos.getSafeBoxRecord(event.searchText, event.searchOption);
+      var resHive = await safeBoxRepos.getSafeBoxRecordHive(event.searchText, event.searchOption);
+
+      print("test");
+      print(resHive);
+      SafeBoxResponse apiResponse = SafeBoxResponse.fromHive(resHive);
+
+      emit(SafeBoxLoaded(data: apiResponse));
+      // if (res.statusCode == 200) {
+      //   SafeBoxResponse apiResponse = SafeBoxResponse.fromJson(jsonDecode(res.body));
+      //
+      //   emit(SafeBoxLoaded(data: apiResponse));
+      // }
+      // else {
+      //   emit(SafeBoxErrorState(errorMessage: "Error While Getting Records"));
+      // }
     } catch (e) {
       emit(SafeBoxErrorState(errorMessage: e.toString()));
     }
@@ -74,5 +84,8 @@ class SafeBoxBloc extends Bloc<SafeBoxEvent, SafeBoxState> {
     emit(SafeBoxHideUnHidePasswordState(event.index, event.hide));
   }
 
+  void hideUnHidePasswordEventPassword(HideUnHidePasswordEventSingleField event, Emitter<SafeBoxState> emit) {
+    emit(SafeBoxHideUnHidePasswordStateSingleField(event.hide));
+  }
 
 }
