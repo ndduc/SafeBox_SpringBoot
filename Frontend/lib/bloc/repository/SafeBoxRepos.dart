@@ -4,7 +4,6 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
-import 'package:safebox/ui/safebox/SafeBox.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../model/dao/SafeBoxDao.dart';
@@ -15,6 +14,8 @@ abstract class AbstractSafeBoxRepos {
   Future<Response> deleteSafeBoxRecord(SafeBoxDao data);
   List<SafeBoxDao> getSafeBoxRecordHive(String searchText, String option);
   SafeBoxDao getSpecificSafeBoxRecordHiveById(String name, String location, String id);
+  void deleteSafeBoxRecordHive(String name, String location, String id);
+  void saveNewSafeBoxRecordForHive(SafeBoxDao data);
 }
 
 class SafeBoxRepos implements AbstractSafeBoxRepos {
@@ -34,9 +35,7 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
 
   SafeBoxDao getSpecificSafeBoxRecordHiveById(String name, String location, String id) {
     String rk = "$name-$location-$id";
-    print(rk);
     SafeBoxModel? result =  Hive.box<SafeBoxModel>('safebox').get(rk);
-    print(result.toString());
 
     return SafeBoxDao.fromHiveModel(result!);
   }
@@ -44,9 +43,13 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
   List<SafeBoxDao> getSafeBoxRecordHive(String searchText, String option) {
     Iterable<SafeBoxModel> result;
     if (option.toUpperCase() == 'LOCATION') {
-      result =  Hive.box<SafeBoxModel>('safebox').values.where((x) => x.location?.toLowerCase() == searchText.toLowerCase());
+      result =  Hive.box<SafeBoxModel>('safebox').values.where((x) =>
+          x.location!.toLowerCase().contains(searchText.toLowerCase())
+      );
     } else if (option.toUpperCase() == 'USER') {
-      result =  Hive.box<SafeBoxModel>('safebox').values.where((x) => x.userName.toLowerCase() == searchText.toLowerCase());
+      result =  Hive.box<SafeBoxModel>('safebox').values.where((x) =>
+          x.userName!.toLowerCase().contains(searchText.toLowerCase())
+      );
     } else {
       result =  Hive.box<SafeBoxModel>('safebox').values;
     }
@@ -82,7 +85,6 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
 
   @override
   Future<Response> saveSafeBoxRecord(SafeBoxDao data) async {
-    await saveNewSafeBoxRecordForHive(data);
     var header = {
       "spring-api-key" : apiKey,
       "Content-Type" : "application/json"
@@ -93,7 +95,8 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
     return response;
   }
 
-  saveNewSafeBoxRecordForHive(SafeBoxDao data) async {
+
+  void saveNewSafeBoxRecordForHive(SafeBoxDao data) async {
     var uuid = Uuid();
     String uniqueId = uuid.v4();
     String hk = "SAFEBOX-ENTITY";
@@ -137,5 +140,11 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
     var body = jsonEncode(data.toJson());
     Response response = await post(Uri.parse(url), headers: header, body: body);
     return response;
+  }
+
+  @override
+  void deleteSafeBoxRecordHive(String name, String location, String id) {
+    String rk = "$name-$location-$id";
+    Hive.box<SafeBoxModel>('safebox').delete(rk);
   }
 }

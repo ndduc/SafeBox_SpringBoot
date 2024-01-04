@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
 import 'package:safebox/model/dao/SafeBoxDao.dart';
 
@@ -40,4 +41,22 @@ class GetSpecificSafeBoxRecordHiveByIdEvent extends SafeBoxEvent {
   final String location;
   final String id;
   GetSpecificSafeBoxRecordHiveByIdEvent({required this.name, required this.location, required this.id});
+}
+
+class DeleteSafeBoxRecordHiveErrorEvent extends SafeBoxEvent {
+  final int deletedIndex;
+  final String name;
+  final String location;
+  final String id;
+  DeleteSafeBoxRecordHiveErrorEvent({required this.name, required this.location, required this.id, required this.deletedIndex});
+}
+
+class SaveNewSafeBoxRecordForHiveEvent extends SafeBoxEvent {
+  final SafeBoxDao data;
+  SaveNewSafeBoxRecordForHiveEvent({required this.data});
+}
+
+class NavToSafeBoxEvent extends SafeBoxEvent {
+  final BuildContext context;
+  NavToSafeBoxEvent({required this.context});
 }

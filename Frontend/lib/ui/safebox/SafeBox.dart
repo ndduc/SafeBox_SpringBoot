@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
@@ -10,7 +9,7 @@ import '../../model/dao/SafeBoxDao.dart';
 import 'AddSafeBox.dart';
 import 'EditSafeBox.dart';
 
-List<String> searchOptionList = ['Location', 'User'];
+List<String> searchOptionList = ['All', 'Location', 'User'];
 
 class SafeBox extends StatefulWidget {
   const SafeBox({super.key});
@@ -27,7 +26,6 @@ class _SafeBox extends State<SafeBox> {
   TextEditingController searchController = TextEditingController();
   List<TextEditingController> userNameControllerList = [];
   List<TextEditingController> passWordControllerList = [];
-
 
   @override
   void initState() {
@@ -61,7 +59,6 @@ class _SafeBox extends State<SafeBox> {
         bloc: safeBoxBloc,
         builder: (context, state) {
           if (state is SafeBoxLoading) {
-            print("LOADING");
           }
           else if (state is SafeBoxLoaded) {
             safeBoxList = state.data.dataObject;
@@ -71,20 +68,38 @@ class _SafeBox extends State<SafeBox> {
             }
             userNameControllerList = List.generate(safeBoxList.length, (index) => TextEditingController(text: safeBoxList[index].userName));
             passWordControllerList = List.generate(safeBoxList.length, (index) => TextEditingController(text: safeBoxList[index].password));
-
-            print("LOADED");
           }
-          else if (state is SafeBoxPostLoaded) {
-            print("POST LOADED");
-          }
-          else if (state is SafeBoxErrorState) {
-            print("ERROR\t\t" + state.errorMessage);
+          else if (state is SafeBoxDeleteSafeBoxRecordHiveLoaded) {
+            safeBoxList.removeAt(state.deleteIndex);
           }
           else if (state is SafeBoxSearchOptionUpdateState) {
             searchOptionSelectedValue = state.selectedOption;
           }
           else if (state is SafeBoxHideUnHidePasswordState) {
             credCartPasswordMap[state.index] = state.hide;
+          }
+          else if (state is SaveNewSafeBoxRecordForHiveLoaded) {
+          }
+          else if (
+              state is SaveNewSafeBoxRecordForHiveError ||
+              state is SafeBoxErrorState ||
+              state is SafeBoxDeleteSafeBoxRecordHiveError ||
+              state is SaveNewSafeBoxRecordForHiveError) {
+
+            String error = "";
+            if (state is SaveNewSafeBoxRecordForHiveError) {
+              error = state.errorMessage;
+            }
+            else if (state is SafeBoxErrorState) {
+              error = state.errorMessage;
+            }
+            else if (state is SafeBoxDeleteSafeBoxRecordHiveError) {
+              error = state.errorMessage;
+            }
+            else if (state is SaveNewSafeBoxRecordForHiveError) {
+              error = state.errorMessage;
+            }
+            showSnackBar(error);
           }
           return mainBody();
         },
@@ -161,7 +176,7 @@ class _SafeBox extends State<SafeBox> {
                               safeBoxBloc.add(GetRecordsEvent(searchController.text, searchOptionSelectedValue));
 
                             },
-                            child: Text('Search Credential'),
+                            child: Text('Search'),
                           ),
                         ),
                         SizedBox(
@@ -293,7 +308,7 @@ class _SafeBox extends State<SafeBox> {
                       var model = safeBoxList[index];
                       model.password = passWordControllerList[index].text;
                       model.userName = userNameControllerList[index].text;
-                      safeBoxBloc.add(SaveRecordEvent(model));
+                      safeBoxBloc.add(SaveNewSafeBoxRecordForHiveEvent(data: model));
                     },
                   ),
                   const SizedBox(width: 8),
@@ -333,6 +348,15 @@ class _SafeBox extends State<SafeBox> {
     );
   }
 
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 2),
+        )
+    );
+  }
+
   Future confirmDialog(int index) {
     return showDialog(
         context: context,
@@ -351,7 +375,8 @@ class _SafeBox extends State<SafeBox> {
             onPressed: () {
               // Perform delete action
               var model = safeBoxList[index];
-              safeBoxBloc.add(DeleteRecordEvent(model));
+              // safeBoxBloc.add(DeleteRecordEvent(model));
+              safeBoxBloc.add(DeleteSafeBoxRecordHiveErrorEvent(name: model.name, location: model.location, id: model.id, deletedIndex: index));
               Navigator.of(context).pop();
             },
           ),

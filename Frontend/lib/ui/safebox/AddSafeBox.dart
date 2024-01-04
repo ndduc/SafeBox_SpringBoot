@@ -4,6 +4,7 @@ import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/bloc/event/SafeBoxEvent.dart';
 import 'package:safebox/bloc/state/SafeBoxState.dart';
 import 'package:safebox/model/dao/SafeBoxDao.dart';
+import 'package:safebox/ui/safebox/SafeBox.dart';
 
 class AddSafeBox extends StatefulWidget {
   const AddSafeBox({super.key});
@@ -68,14 +69,24 @@ class _AddSafeBox extends State<AddSafeBox> {
           if (state is SafeBoxLoading) {
 
           }
-          else if (state is SafeBoxPostLoaded) {
-            print("LOADED" + state.status);
-          }
-          else if (state is SafeBoxErrorState) {
-            print("LOADED" + state.errorMessage);
-          }
           else if (state is SafeBoxHideUnHidePasswordStateSingleField) {
             _isTextHiddenPassword = state.hide;
+          }
+          else if (state is SaveNewSafeBoxRecordForHiveLoaded) {
+            safeBoxBloc.add(NavToSafeBoxEvent(context: context));
+          }
+          else if (
+            state is SaveNewSafeBoxRecordForHiveError ||
+            state is SafeBoxErrorState
+          ) {
+              String error = "'";
+              if (state is SaveNewSafeBoxRecordForHiveError) {
+                error = state.errorMessage;
+              }
+              else if (state is SafeBoxErrorState) {
+                error = state.errorMessage;
+              }
+              showSnackBar(error);
           }
           return mainBody();
         }
@@ -178,7 +189,7 @@ class _AddSafeBox extends State<AddSafeBox> {
                             userName: userNameController.text,
                             website: urlController.text,
                             note: noteController.text);
-                        safeBoxBloc.add(SaveRecordEvent(model));
+                        safeBoxBloc.add(SaveNewSafeBoxRecordForHiveEvent(data: model));
 
                       },
                     )
@@ -190,6 +201,15 @@ class _AddSafeBox extends State<AddSafeBox> {
           )
       ),
 
+    );
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 2),
+        )
     );
   }
 }

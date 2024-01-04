@@ -48,3 +48,28 @@ class SafeBoxGetSpecificSafeBoxRecordHiveByIdError extends SafeBoxState {
   final String errorMessage;
   SafeBoxGetSpecificSafeBoxRecordHiveByIdError({required this.errorMessage});
 }
+
+
+class SafeBoxDeleteSafeBoxRecordHiveLoaded extends SafeBoxState {
+  final int deleteIndex;
+  SafeBoxDeleteSafeBoxRecordHiveLoaded({required this.deleteIndex});
+}
+
+class SafeBoxDeleteSafeBoxRecordHiveError extends SafeBoxState {
+  final String errorMessage;
+  SafeBoxDeleteSafeBoxRecordHiveError({required this.errorMessage});
+}
+
+class SaveNewSafeBoxRecordForHiveLoaded extends SafeBoxState {
+  SaveNewSafeBoxRecordForHiveLoaded();
+}
+
+class SaveNewSafeBoxRecordForHiveError extends SafeBoxState {
+  final String errorMessage;
+  SaveNewSafeBoxRecordForHiveError({required this.errorMessage});
+}
+
+
+class NavToSafeBox extends SafeBoxState {
+  NavToSafeBox();
+}

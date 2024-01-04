@@ -75,16 +75,28 @@ class _EditSafeBox extends State<EditSafeBox> {
 
               }
               else if (state is SafeBoxGetSpecificSafeBoxRecordHiveByIdLoaded) {
-                print("LOADED");
                 safeBoxDao = state.safebox;
-                print(safeBoxDao.id);
-
                 loadData();
-              }
-              else if (state is SafeBoxGetSpecificSafeBoxRecordHiveByIdError) {
               }
               else if (state is SafeBoxHideUnHidePasswordStateSingleField) {
                 _isTextHiddenPassword = state.hide;
+              }
+              else if (
+                  state is SaveNewSafeBoxRecordForHiveError ||
+                  state is SafeBoxErrorState ||
+                  state is SafeBoxGetSpecificSafeBoxRecordHiveByIdError
+              ) {
+                String error = "'";
+                if (state is SaveNewSafeBoxRecordForHiveError) {
+                  error = state.errorMessage;
+                }
+                else if (state is SafeBoxErrorState) {
+                  error = state.errorMessage;
+                }
+                else if (state is SafeBoxGetSpecificSafeBoxRecordHiveByIdError) {
+                  error = state.errorMessage;
+                }
+                showSnackBar(error);
               }
               return mainBody();
             }
@@ -208,6 +220,15 @@ class _EditSafeBox extends State<EditSafeBox> {
           )
       ),
 
+    );
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 2),
+        )
     );
   }
 }
