@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/SafeBoxBloc.dart';
 import 'package:safebox/ui/gallery/Gallery.dart';
+import 'package:safebox/ui/note/Note.dart';
 import 'package:safebox/ui/safebox/SafeBox.dart';
 
 import 'model/MainMenuUIModel.dart';
 
 String safeBoxKey = "SAFE-BOX";
 String galleryKey = "GALLERY";
+String noteKey = "NOTE";
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
@@ -20,6 +22,7 @@ class MainMenu extends StatefulWidget {
 class _MainMenu extends State<MainMenu> {
   List<MainMenuUIModel> uiMenuList = [
     MainMenuUIModel(mainTitle: "Safe Box", subTitle: "Manage Credential", key: safeBoxKey, icon: const Icon(Icons.security)),
+    MainMenuUIModel(mainTitle: "Note", subTitle: "Quick Note", key: noteKey, icon: const Icon(Icons.note)),
     MainMenuUIModel(mainTitle: "Gallery", subTitle: "Photo Viewer", key: galleryKey, icon: const Icon(Icons.photo))
   ];
 
@@ -83,6 +86,12 @@ class _MainMenu extends State<MainMenu> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Gallery()),
+      );
+    }
+    else if (key == noteKey) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Note()),
       );
     }
 

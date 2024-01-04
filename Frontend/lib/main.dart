@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:safebox/bloc/bloc/NoteBloc.dart';
+import 'package:safebox/hive-data/hive-model/NoteModel.dart';
 import 'package:safebox/hive-data/hive-model/SafeBoxModel.dart';
 import 'package:safebox/ui/menu/MainMenu.dart';
 import 'bloc/bloc/GalleryBloc.dart';
@@ -11,7 +13,9 @@ Future<void> main() async {
   final appDocumentDirectory = await path_provider.getApplicationDocumentsDirectory();
   Hive.init(appDocumentDirectory.path);
   Hive.registerAdapter(SafeBoxModelAdapter());
+  Hive.registerAdapter(NoteModelAdapter());
   await Hive.openBox<SafeBoxModel>('safebox');
+  await Hive.openBox<NoteModel>('note');
 
   runApp(const MyApp());
 }
@@ -28,6 +32,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<SafeBoxBloc>(
           create: (_) => SafeBoxBloc(),
         ),
+        BlocProvider<NoteBloc>(
+            create: (_) => NoteBloc()
+        )
       ],
       child: MaterialApp(
         title: 'Flutter BLoC Example',
