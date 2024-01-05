@@ -1,7 +1,7 @@
 import '../../hive-data/hive-model/NoteModel.dart';
 
 class NoteDao {
-  String id = "";
+  late String id;
   late String content;
   late String createdDateTime;
   late String modifiedDateTime;

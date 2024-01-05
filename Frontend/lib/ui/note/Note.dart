@@ -5,6 +5,8 @@ import 'package:safebox/bloc/bloc/NoteBloc.dart';
 import 'package:safebox/bloc/state/NoteState.dart';
 import 'package:safebox/model/dao/NoteDao.dart';
 
+import 'PutNote.dart';
+
 class Note extends StatefulWidget {
   const Note({super.key});
   @override
@@ -103,13 +105,10 @@ class _Note extends State<Note> {
             TextButton(
               child: Text('Note'),
               onPressed: () {
-
-              },
-            ),
-            TextButton(
-              child: Text('Checklist'),
-              onPressed: () {
-
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PutNote()),
+                );
               },
             )
           ],

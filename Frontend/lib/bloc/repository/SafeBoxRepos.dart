@@ -62,7 +62,6 @@ class SafeBoxRepos implements AbstractSafeBoxRepos {
     List<SafeBoxDao> daos = [];
 
     for (var model in models) {
-      print(model.toString());
       SafeBoxDao dao = SafeBoxDao(
         hashKey: model.hashKey,
         rangeKey: model.rangeKey,
