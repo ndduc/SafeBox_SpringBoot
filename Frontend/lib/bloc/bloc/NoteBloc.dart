@@ -1,8 +1,11 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:safebox/bloc/event/NoteEvent.dart';
 import 'package:safebox/bloc/repository/NoteRepos.dart';
 import 'package:safebox/bloc/state/NoteState.dart';
 import 'package:safebox/model/dao/NoteDao.dart';
+import 'package:safebox/ui/note/Note.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   NoteBloc(): super(NoteInitial()) {
@@ -10,9 +13,17 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     on<GetNotesEvent>(getNotesEvent);
     on<GetNoteEvent>(getNoteEvent);
     on<DeleteNoteEvent>(deleteNoteEvent);
+    on<NavToNoteEvent>(navToNoteEvent);
   }
   
   AbstractNoteRepos noteRepos = NoteRepos();
+
+  void navToNoteEvent(NavToNoteEvent event, Emitter<NoteState> emitter) {
+    Navigator.push(
+      event.context,
+      MaterialPageRoute(builder: (context) => const Note()),
+    );
+  }
 
   void deleteNoteEvent(DeleteNoteEvent event, Emitter<NoteState> emitter) {
     try {

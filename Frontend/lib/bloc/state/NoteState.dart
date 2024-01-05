@@ -27,3 +27,7 @@ class GetNotesLoaded extends NoteState {
 class DeleteNoteLoaded extends NoteState {
   DeleteNoteLoaded();
 }
+
+class NavToNoteLoaded extends NoteState {
+  NavToNoteLoaded();
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:safebox/model/dao/NoteDao.dart';
 
 abstract class NoteEvent {}
@@ -20,4 +21,10 @@ class GetNotesEvent extends NoteEvent {
 class DeleteNoteEvent extends NoteEvent {
   final String id;
   DeleteNoteEvent(this.id);
+}
+
+
+class NavToNoteEvent extends NoteEvent {
+  final BuildContext context;
+  NavToNoteEvent(this.context);
 }

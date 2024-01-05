@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/NoteBloc.dart';
+import 'package:safebox/bloc/event/NoteEvent.dart';
 import 'package:safebox/bloc/state/NoteState.dart';
 import 'package:safebox/model/dao/NoteDao.dart';
+import 'package:safebox/ui/menu/MainMenu.dart';
 
 import 'PutNote.dart';
 
@@ -22,6 +24,7 @@ class _Note extends State<Note> {
   void initState() {
     super.initState();
     noteBloc = NoteBloc();
+    noteBloc.add(GetNotesEvent());
 
   }
 
@@ -34,25 +37,42 @@ class _Note extends State<Note> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Note'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              // Add your onPressed code here!
-              addNoteDialog();
-            },
-          ),
-        ]
-      ),
-      body: BlocBuilder<NoteBloc, NoteState>(
-        bloc: noteBloc,
-        builder: (context, state) {
-          return mainBody();
-        }
-      )
+    return WillPopScope(
+        onWillPop: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainMenu()),
+          );
+          // Return false to cancel the default back button action
+          return false;
+        },
+        child: Scaffold(
+            appBar: AppBar(
+                title: Text('Note'),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      // Add your onPressed code here!
+                      addNoteDialog();
+                    },
+                  ),
+                ]
+            ),
+            body: BlocBuilder<NoteBloc, NoteState>(
+                bloc: noteBloc,
+                builder: (context, state) {
+                  if (state is NoteLoading) {
+
+                  } else if (state is NoteError) {
+                    showSnackBar(state.errorMessage);
+                  } else if (state is GetNotesLoaded) {
+                    noteBoxList = state.notes;
+                  }
+                  return mainBody();
+                }
+            )
+        ),
     );
   }
 
@@ -81,17 +101,26 @@ class _Note extends State<Note> {
   }
 
   Widget noteCard(int index) {
-    return Card(
-      child: Container(
-        child: Column(
-          children: [
-            SizedBox(
-              child: Text("test"),
-            )
-          ],
-        ),
-      ),
-    );
+    return
+      InkWell(
+        onTap: () {
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PutNote(id: noteBoxList[index].id)),
+          );
+        },
+        child: Card(
+          child: Container(
+            child: Column(
+              children: [
+                SizedBox(
+                  child: Text("test"),
+                )
+              ],
+            ),
+          ),
+        )
+      );
   }
 
 
@@ -112,6 +141,15 @@ class _Note extends State<Note> {
               },
             )
           ],
+        )
+    );
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 2),
         )
     );
   }

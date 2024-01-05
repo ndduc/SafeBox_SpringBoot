@@ -2,17 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:safebox/bloc/bloc/NoteBloc.dart';
+import 'package:safebox/bloc/event/NoteEvent.dart';
+import 'package:safebox/model/dao/NoteDao.dart';
 
 import '../../bloc/state/NoteState.dart';
+import 'Note.dart';
 
 class PutNote extends StatefulWidget {
-  const PutNote({super.key});
+  String? id;
+  PutNote({super.key, this.id});
   _PutNote createState() => _PutNote();
 }
 
 
 class _PutNote extends State<PutNote> {
   late NoteBloc noteBloc;
+  late NoteDao model;
   ScrollController _scrollController = ScrollController();
   FocusNode noteFocusNode = FocusNode();
   TextEditingController noteController = TextEditingController();
@@ -20,6 +25,11 @@ class _PutNote extends State<PutNote> {
   @override
   void initState() {
     super.initState();
+    noteBloc = NoteBloc();
+
+    if (widget.id != null)  {
+      noteBloc.add(GetNoteEvent(widget.id!));
+    }
     noteFocusNode.addListener(() {
       if (noteFocusNode.hasFocus) {
         // Scroll to the bottom of the screen when the note field is focused
@@ -30,7 +40,6 @@ class _PutNote extends State<PutNote> {
         );
       }
     });
-    noteBloc = NoteBloc();
   }
 
   @override
@@ -43,23 +52,48 @@ class _PutNote extends State<PutNote> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('SafeBox'),
-      ),
-      body: BlocBuilder<NoteBloc, NoteState>(
-        bloc: noteBloc,
-        builder: (context, state) {
-          return mainBody();
-        }
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Handle FAB press
-        },
-        child: Icon(Icons.save),
+    return WillPopScope(
+      onWillPop: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Note()),
+        );
+        // Return false to cancel the default back button action
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('SafeBox'),
+          ),
+          body: BlocBuilder<NoteBloc, NoteState>(
+              bloc: noteBloc,
+              builder: (context, state) {
+                if (state is NoteLoading) {
+
+                } else if (state is NoteError) {
+                  showSnackBar(state.errorMessage);
+                } else if (state is SaveNoteLoaded) {
+                  // noteBloc.add(NavToNoteEvent(context));
+                } else if (state is GetNoteLoaded) {
+                  model = state.note;
+                  noteController.text = model.content;
+                }
+
+                return mainBody();
+              }
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              model = NoteDao.newRecord(content: noteController.text);
+              noteBloc.add(SaveNoteEvent(model));
+            },
+            child: Icon(Icons.save),
+          )
       )
     );
+
+
+
   }
 
   Widget mainBody() {
@@ -99,4 +133,12 @@ class _PutNote extends State<PutNote> {
     );
   }
 
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 2),
+        )
+    );
+  }
 }

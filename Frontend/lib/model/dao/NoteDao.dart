@@ -1,12 +1,14 @@
 import '../../hive-data/hive-model/NoteModel.dart';
 
 class NoteDao {
-  late String id;
-  late String content;
-  late String createdDateTime;
-  late String modifiedDateTime;
+  String id = "";
+  String content = "";
+  String createdDateTime = "";
+  String modifiedDateTime = "";
 
   NoteDao({required this.id, required this.content, required this.createdDateTime, required this.modifiedDateTime});
+
+  NoteDao.newRecord({required this.content});
 
   factory NoteDao.fromHiveModel(NoteModel model) {
     return NoteDao(
